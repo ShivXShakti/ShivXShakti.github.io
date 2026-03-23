@@ -1,143 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Your Name — Portfolio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --bg: #0a0a0f;
-  --bg2: #111118;
-  --bg3: #18181f;
-  --cream: #f0ece0;
-  --accent: #c8f06e;
-  --accent2: #f06e6e;
-  --muted: #6b6b7a;
-  --border: rgba(255,255,255,0.07);
-  --serif: 'Instrument Serif', Georgia, serif;
-  --mono: 'DM Mono', monospace;
-  --sans: 'Syne', sans-serif;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--cream);font-family:var(--mono);font-weight:300;font-size:15px;line-height:1.7;overflow-x:hidden;cursor:none;}
-.cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:difference;}
-.cursor.big{width:40px;height:40px;background:var(--cream);}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.4;}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.5rem 3rem;background:linear-gradient(to bottom,rgba(10,10,15,.95),transparent);}
-.nav-logo{font-family:var(--sans);font-weight:800;font-size:1.1rem;letter-spacing:-.02em;color:var(--cream);text-decoration:none;}
-.nav-links{display:flex;gap:2rem;list-style:none;}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:.05em;text-transform:uppercase;transition:color .2s;position:relative;}
-.nav-links a::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
-.nav-links a:hover{color:var(--cream);}
-.nav-links a:hover::after{transform:scaleX(1);}
-#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 3rem 5rem;position:relative;overflow:hidden;}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 40%,rgba(200,240,110,.06) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 20% 80%,rgba(240,110,110,.04) 0%,transparent 50%);}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%);}
-.hero-tag{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;}
-.hero-tag::before{content:'';display:block;width:30px;height:1px;background:var(--accent);}
-.hero-name{font-family:var(--serif);font-size:clamp(4rem,10vw,9rem);line-height:.95;letter-spacing:-.02em;color:var(--cream);margin-bottom:.5rem;}
-.hero-name em{font-style:italic;color:transparent;-webkit-text-stroke:1px rgba(240,236,224,.4);}
-.hero-sub{font-family:var(--mono);font-size:14px;color:var(--muted);max-width:420px;margin-top:1.5rem;line-height:1.8;}
-.hero-scroll{position:absolute;right:3rem;bottom:4rem;writing-mode:vertical-rl;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:1rem;}
-.hero-scroll::after{content:'';display:block;width:1px;height:60px;background:linear-gradient(to bottom,var(--muted),transparent);animation:scrollline 2s ease-in-out infinite;}
-@keyframes scrollline{0%,100%{opacity:.3}50%{opacity:1}}
-section{padding:6rem 3rem;position:relative;}
-.section-num{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;}
-.section-title{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4.5rem);line-height:1.05;letter-spacing:-.02em;margin-bottom:3rem;}
-.section-title em{font-style:italic;color:transparent;-webkit-text-stroke:1px rgba(240,236,224,.35);}
-.divider{border:none;border-top:1px solid var(--border);margin:0 3rem;}
-#about .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
-.about-text p{color:#b0aca0;margin-bottom:1.2rem;line-height:1.9;}
-.about-text p strong{color:var(--cream);font-weight:500;}
-.about-facts{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.fact-row{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;background:var(--bg2);border-bottom:1px solid var(--border);transition:background .2s;}
-.fact-row:hover{background:var(--bg3);}
-.fact-row:last-child{border-bottom:none;}
-.fact-key{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-.fact-val{font-size:14px;color:var(--cream);}
-.skill-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:2rem;}
-.chip{padding:4px 12px;border:1px solid var(--border);border-radius:100px;font-size:12px;color:var(--muted);letter-spacing:.04em;transition:all .2s;}
-.chip:hover{border-color:var(--accent);color:var(--accent);}
-#projects .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1px;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
-.project-card{background:var(--bg2);padding:2rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .25s;position:relative;overflow:hidden;}
-.project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);transform:scaleX(0);transition:transform .4s;}
-.project-card:hover{background:var(--bg3);}
-.project-card:hover::before{transform:scaleX(1);}
-.project-num{font-size:11px;color:var(--accent);letter-spacing:.1em;margin-bottom:1rem;}
-.project-name{font-family:var(--serif);font-size:1.5rem;margin-bottom:.75rem;line-height:1.2;}
-.project-desc{font-size:13px;color:#8a8a99;line-height:1.7;margin-bottom:1.5rem;}
-.project-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.5rem;}
-.ptag{font-size:11px;padding:3px 8px;background:rgba(200,240,110,.08);color:var(--accent);border-radius:2px;letter-spacing:.06em;text-transform:uppercase;}
-.project-link{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color .2s;}
-.project-link:hover{color:var(--cream);}
-.project-link .arrow{transition:transform .2s;}
-.project-link:hover .arrow{transform:translate(3px,-3px);}
-#research .research-list{display:flex;flex-direction:column;}
-.research-item{display:grid;grid-template-columns:80px 1fr auto;gap:2rem;align-items:start;padding:2rem 0;border-bottom:1px solid var(--border);}
-.research-item:first-child{border-top:1px solid var(--border);}
-.research-year{font-size:12px;color:var(--muted);padding-top:4px;}
-.research-title{font-family:var(--serif);font-size:1.25rem;margin-bottom:.4rem;line-height:1.3;}
-.research-venue{font-size:12px;color:var(--muted);}
-.research-badge{font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;background:rgba(240,110,110,.1);color:var(--accent2);align-self:center;white-space:nowrap;}
-.research-badge.pub{background:rgba(200,240,110,.1);color:var(--accent);}
-#hobbies .hobbies-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
-.hobby-card{aspect-ratio:1/1.1;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:2rem;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;transition:transform .3s,border-color .3s;cursor:default;}
-.hobby-card:hover{transform:translateY(-4px);border-color:rgba(200,240,110,.2);}
-.hobby-icon{position:absolute;top:1.5rem;right:1.5rem;font-size:2rem;opacity:.15;transition:opacity .3s,transform .3s;}
-.hobby-card:hover .hobby-icon{opacity:.5;transform:scale(1.1) rotate(-5deg);}
-.hobby-bg{position:absolute;inset:0;opacity:0;transition:opacity .4s;}
-.hobby-card:hover .hobby-bg{opacity:1;}
-.hobby-name{font-family:var(--serif);font-size:1.4rem;margin-bottom:.4rem;position:relative;z-index:1;}
-.hobby-desc{font-size:12px;color:var(--muted);position:relative;z-index:1;line-height:1.6;}
-#blog .blog-list{display:flex;flex-direction:column;}
-.blog-post{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;padding:1.75rem 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;transition:padding-left .3s;}
-.blog-post:first-child{border-top:1px solid var(--border);}
-.blog-post:hover{padding-left:1rem;}
-.blog-post-title{font-family:var(--serif);font-size:1.2rem;margin-bottom:.3rem;transition:color .2s;}
-.blog-post:hover .blog-post-title{color:var(--accent);}
-.blog-post-meta{font-size:12px;color:var(--muted);}
-.blog-post-tag{font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:2px;color:var(--muted);white-space:nowrap;}
-.coming-soon{text-align:center;padding:4rem 0;color:var(--muted);font-size:13px;}
-.coming-soon .big{font-family:var(--serif);font-size:3rem;color:rgba(240,236,224,.08);display:block;margin-bottom:1rem;}
-#contact{background:var(--bg2);border-top:1px solid var(--border);}
-.contact-inner{max-width:640px;}
-.contact-intro{color:var(--muted);margin-bottom:2.5rem;font-size:14px;line-height:1.8;}
-.contact-links{display:flex;flex-direction:column;gap:1px;}
-.contact-link{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;background:var(--bg3);border:1px solid var(--border);text-decoration:none;color:var(--cream);transition:background .2s,border-color .2s;margin-bottom:1px;}
-.contact-link:hover{background:var(--bg);border-color:var(--accent);}
-.contact-link-left{display:flex;align-items:center;gap:1rem;}
-.contact-link-icon{font-size:18px;width:24px;text-align:center;}
-.contact-link-label{font-size:13px;letter-spacing:.05em;}
-.contact-link-value{font-size:13px;color:var(--muted);}
-.contact-link-arrow{font-size:18px;color:var(--muted);transition:transform .2s,color .2s;}
-.contact-link:hover .contact-link-arrow{transform:translate(3px,-3px);color:var(--accent);}
-footer{padding:2rem 3rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);}
-.fade-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
-.fade-up.visible{opacity:1;transform:translateY(0);}
-@media(max-width:768px){
-  nav{padding:1.25rem 1.5rem;}
-  .nav-links{display:none;}
-  section{padding:4rem 1.5rem;}
-  #hero{padding:0 1.5rem 4rem;}
-  .about-grid{grid-template-columns:1fr!important;}
-  .hobbies-grid{grid-template-columns:1fr 1fr!important;}
-  .research-item{grid-template-columns:1fr;gap:.5rem;}
-  footer{padding:1.5rem;flex-direction:column;gap:.5rem;text-align:center;}
-  .divider{margin:0 1.5rem;}
-  .hero-scroll{display:none;}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+    CHANGE: Update this to your real name.
+    This text appears in the browser tab.
+  ============================================================ -->
+  <title>Kuldeep Gurjar — Robotics & AI Researcher</title>
+
+  <!-- Google Fonts — no changes needed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+
+    /* ============================================================
+      CHANGE: Global color theme.
+      Edit these variables to restyle the whole site instantly.
+        --accent  = gold highlight (headings, links, buttons)
+        --accent2 = warm orange (project card hover lines)
+        --accent3 = teal (research badges, form success)
+        --bg      = main dark background
+        --ink     = primary text color
+    ============================================================ */
+    :root {
+      --bg:      #0d0d0d;
+      --bg2:     #141414;
+      --bg3:     #1a1a1a;
+      --ink:     #f0ece4;
+      --ink2:    #9e9a93;
+      --ink3:    #5c5a56;
+      --accent:  #e8c97a;
+      --accent2: #c46a3a;
+      --accent3: #7ab8a8;
+      --serif:   'Cormorant Garamond', Georgia, serif;
+      --sans:    'Syne', sans-serif;
+      --mono:    'DM Mono', monospace;
+      --max:     1100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.7;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* Custom cursor dot */
+    #cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s;
+      mix-blend-mode: difference;
+    }
+    #cursor.big { width: 40px; height: 40px; opacity: .3; }
+
+    /* Subtle film-grain noise overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+      opacity: .35;
+    }
+
+    /* ── NAVIGATION ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(13,13,13,.95), transparent);
+    }
+    .nav-logo {
+      font-family: var(--sans); font-weight: 800; font-size: 1rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono); font-size: .72rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--ink2); text-decoration: none;
+      transition: color .2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--accent); transition: width .3s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ── HERO ───────────────────────────────────────────────── */
+
+    /* ============================================================
+      CHANGE: Hero background image.
+
+      HOW TO ADD YOUR BACKGROUND IMAGE:
+        1. Copy your image file into the SAME FOLDER as index.html
+           (e.g. background.jpg, hero.png, lab-photo.webp)
+        2. Replace 'your-background.jpg' on the line below
+           with your actual filename
+        3. Adjust background-position to frame the image:
+              "center center"  shows the middle (default)
+              "center top"     shows the top of the image
+              "center bottom"  shows the bottom
+              "80% center"     shifts focus to the right
+        4. Remove the background-attachment line to disable parallax
+
+      TIPS:
+        - Use a wide landscape image (1920x1080 or larger)
+        - Keep file size under 500KB (compress free at squoosh.app)
+        - Supported formats: .jpg  .jpeg  .png  .webp
+        - The dark overlay in the HTML below keeps text readable;
+          adjust the opacity values (0.85 / 0.50) there if needed
+    ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; padding: 0 3rem; gap: 4rem;
+      position: relative; overflow: hidden;
+
+      background-image: url('your-background.jpg');  /* CHANGE: your image filename here */
+      background-size: cover;
+      background-position: center center;            /* CHANGE: reposition if needed */
+      background-repeat: no-repeat;
+      background-attachment: fixed;                  /* Parallax — remove this line to disable */
+    }
+
+    .hero-bg-line {
+      position: absolute; top: 0; bottom: 0; left: 50%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--ink3) 30%, var(--ink3) 70%, transparent);
+      opacity: .3;
+    }
+    .hero-left { padding-top: 6rem; }
+    .hero-tag {
+      font-family: var(--mono); font-size: .72rem; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: .75rem;
+    }
+    .hero-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      font-weight: 300; line-height: 1.05; letter-spacing: -.02em; margin-bottom: .25rem;
+    }
+    .hero-name em { font-style: italic; color: var(--accent); }
+    .hero-title {
+      font-family: var(--sans); font-size: .85rem; font-weight: 400;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--ink2); margin-bottom: 2rem;
+    }
+    .hero-desc { font-size: 1.1rem; color: var(--ink2); max-width: 420px; line-height: 1.8; margin-bottom: 2.5rem; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: .75rem;
+      font-family: var(--mono); font-size: .75rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--bg); background: var(--accent);
+      padding: .85rem 2rem; text-decoration: none; transition: background .2s, gap .3s;
+    }
+    .hero-cta:hover { background: var(--ink); gap: 1.25rem; }
+    .hero-right { display: flex; flex-direction: column; gap: 2rem; padding-top: 6rem; align-items: flex-end; }
+    .hero-stat { text-align: right; border-right: 1px solid var(--ink3); padding-right: 1.5rem; }
+    .hero-stat-num { font-family: var(--serif); font-size: 3.5rem; font-weight: 300; color: var(--accent); line-height: 1; }
+    .hero-stat-label { font-family: var(--mono); font-size: .68rem; letter-spacing: .15em; text-transform: uppercase; color: var(--ink3); }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .5rem;
+      font-family: var(--mono); font-size: .65rem; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--ink3);
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--ink3), transparent);
+      animation: scrollDown 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollDown {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ── SHARED SECTION STYLES ──────────────────────────────── */
+    section { padding: 7rem 3rem; max-width: var(--max); margin: 0 auto; }
+    .section-label {
+      font-family: var(--mono); font-size: .68rem; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .75rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .section-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+    .section-heading {
+      font-family: var(--serif); font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300; line-height: 1.1; margin-bottom: 3.5rem;
+    }
+    .section-heading em { font-style: italic; color: var(--accent); }
+
+    /* ── ABOUT ──────────────────────────────────────────────── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 5rem; align-items: start; }
+    .about-img-wrap { position: relative; }
+    .about-img-placeholder {
+      width: 100%; aspect-ratio: 3/4; background: var(--bg3); border: 1px solid var(--ink3);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: .75rem;
+      color: var(--ink3); font-family: var(--mono); font-size: .7rem; letter-spacing: .1em;
+      position: relative; overflow: hidden;
+    }
+    .about-img-placeholder::after {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,.015) 20px, rgba(255,255,255,.015) 21px);
+    }
+    .about-img-icon { font-size: 2.5rem; opacity: .3; }
+    .about-img-wrap::before {
+      content: ''; position: absolute; top: 12px; left: 12px; right: -12px; bottom: -12px;
+      border: 1px solid var(--accent); opacity: .25; z-index: -1;
+    }
+    .about-text p { color: var(--ink2); margin-bottom: 1.5rem; font-size: 1.05rem; line-height: 1.9; }
+    .about-text p:first-child { font-size: 1.25rem; color: var(--ink); font-weight: 300; }
+    .skills-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 2rem; }
+    .skill-tag {
+      font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
+      text-transform: uppercase; border: 1px solid var(--ink3);
+      color: var(--ink2); padding: .3rem .75rem; transition: border-color .2s, color .2s;
+    }
+    .skill-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── PROJECTS ───────────────────────────────────────────── */
+    #projects { background: var(--bg2); max-width: 100%; padding: 7rem 0; }
+    #projects > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--ink3); border: 1px solid var(--ink3);
+    }
+    .project-card { background: var(--bg2); padding: 2rem; transition: background .3s; position: relative; overflow: hidden; }
+    .project-card::before {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left; transition: transform .4s;
+    }
+    .project-card:hover { background: var(--bg3); }
+    .project-card:hover::before { transform: scaleX(1); }
+    .project-num { font-family: var(--mono); font-size: .65rem; color: var(--ink3); letter-spacing: .1em; margin-bottom: 1.25rem; }
+    .project-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; margin-bottom: .75rem; line-height: 1.2; }
+    .project-desc { font-size: .9rem; color: var(--ink2); line-height: 1.7; margin-bottom: 1.5rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
+    .project-tag {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .08em;
+      text-transform: uppercase; background: var(--bg); color: var(--ink3); padding: .2rem .6rem;
+    }
+    .project-link {
+      font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent); text-decoration: none;
+      display: inline-flex; align-items: center; gap: .5rem; transition: gap .2s;
+    }
+    .project-link:hover { gap: .9rem; }
+
+    /* ── RESEARCH ───────────────────────────────────────────── */
+    .research-list { display: flex; flex-direction: column; }
+    .research-item {
+      display: grid; grid-template-columns: 80px 1fr auto; gap: 2rem;
+      align-items: start; padding: 2rem 0; border-bottom: 1px solid var(--bg3);
+      transition: padding-left .3s; cursor: default;
+    }
+    .research-item:hover { padding-left: 1rem; }
+    .research-year { font-family: var(--mono); font-size: .72rem; color: var(--ink3); letter-spacing: .08em; padding-top: .2rem; }
+    .research-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; margin-bottom: .4rem; }
+    .research-venue { font-family: var(--mono); font-size: .7rem; color: var(--accent3); letter-spacing: .08em; margin-bottom: .5rem; }
+    .research-abstract { font-size: .88rem; color: var(--ink2); line-height: 1.7; }
+    .research-badge {
+      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase;
+      border: 1px solid var(--accent3); color: var(--accent3);
+      padding: .25rem .6rem; white-space: nowrap; height: fit-content; margin-top: .3rem;
+    }
+
+    /* ── HOBBIES ────────────────────────────────────────────── */
+    #hobbies { background: var(--bg2); max-width: 100%; padding: 7rem 0; }
+    #hobbies > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
+    .hobbies-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .hobby-card { padding: 2.5rem; border: 1px solid var(--bg3); position: relative; overflow: hidden; transition: border-color .3s; }
+    .hobby-card:hover { border-color: var(--ink3); }
+    .hobby-card:nth-child(1) { grid-column: span 2; }
+    .hobby-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .hobby-name { font-family: var(--sans); font-size: 1.1rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .75rem; }
+    .hobby-desc { font-size: .9rem; color: var(--ink2); line-height: 1.75; }
+    .hobby-card::after {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      opacity: 0; transition: opacity .4s;
+    }
+    .hobby-card:hover::after { opacity: .04; }
+
+    /* ── BLOG ───────────────────────────────────────────────── */
+    .blog-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; }
+    .blog-card {
+      background: var(--bg2); border: 1px solid var(--bg3); padding: 2rem;
+      transition: border-color .3s, transform .3s; text-decoration: none;
+      display: block; color: inherit;
+    }
+    .blog-card:hover { border-color: var(--ink3); transform: translateY(-3px); }
+    .blog-card.featured { grid-row: span 2; background: var(--bg3); }
+    .blog-date { font-family: var(--mono); font-size: .65rem; color: var(--ink3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1rem; }
+    .blog-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; line-height: 1.25; margin-bottom: .75rem; color: var(--ink); }
+    .blog-card.featured .blog-title { font-size: 2rem; margin-bottom: 1rem; }
+    .blog-excerpt { font-size: .88rem; color: var(--ink2); line-height: 1.7; }
+    .blog-read { margin-top: 1.25rem; font-family: var(--mono); font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: .5rem; }
+
+    /* ── CONTACT ────────────────────────────────────────────── */
+    #contact { background: var(--bg2); max-width: 100%; padding: 7rem 0; position: relative; overflow: hidden; }
+    #contact::before {
+      content: 'CONTACT'; position: absolute; bottom: -2rem; right: -1rem;
+      font-family: var(--sans); font-size: 12rem; font-weight: 800;
+      color: var(--bg3); letter-spacing: -.04em;
+      pointer-events: none; user-select: none; line-height: 1;
+    }
+    #contact > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; position: relative; z-index: 1; }
+    .contact-intro { font-size: 1.1rem; color: var(--ink2); line-height: 1.8; margin-bottom: 2.5rem; }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem; text-decoration: none;
+      color: var(--ink2); font-family: var(--mono); font-size: .8rem; letter-spacing: .08em;
+      transition: color .2s; padding-bottom: 1rem; border-bottom: 1px solid var(--bg3);
+    }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link-icon {
+      width: 36px; height: 36px; border: 1px solid var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: border-color .2s;
+    }
+    .contact-link:hover .contact-link-icon { border-color: var(--accent); }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-field { display: flex; flex-direction: column; gap: .4rem; }
+    .form-label { font-family: var(--mono); font-size: .65rem; letter-spacing: .15em; text-transform: uppercase; color: var(--ink3); }
+    .form-input, .form-textarea {
+      background: var(--bg); border: 1px solid var(--bg3); color: var(--ink);
+      font-family: var(--serif); font-size: 1rem; padding: .75rem 1rem;
+      outline: none; transition: border-color .2s; resize: none;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--ink3); }
+    .form-textarea { height: 120px; }
+    .form-btn {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+      font-family: var(--mono); font-size: .72rem; letter-spacing: .15em;
+      text-transform: uppercase; padding: .9rem 2rem; cursor: pointer;
+      transition: background .2s, color .2s; align-self: flex-start;
+    }
+    .form-btn:hover { background: var(--accent); color: var(--bg); }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    footer { padding: 2rem 3rem; border-top: 1px solid var(--bg3); display: flex; justify-content: space-between; align-items: center; }
+    .footer-copy { font-family: var(--mono); font-size: .65rem; color: var(--ink3); letter-spacing: .08em; }
+    .footer-back {
+      font-family: var(--mono); font-size: .65rem; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--ink3); text-decoration: none;
+      transition: color .2s; display: flex; align-items: center; gap: .5rem;
+    }
+    .footer-back:hover { color: var(--accent); }
+
+    /* ── SCROLL ANIMATION ───────────────────────────────────── */
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { gap: 1.25rem; }
+      #hero {
+        grid-template-columns: 1fr;
+        padding: 0 1.5rem;
+        background-attachment: scroll; /* Disable parallax on mobile */
+      }
+      .hero-right { flex-direction: row; align-items: center; padding-top: 0; }
+      .hero-bg-line { display: none; }
+      section { padding: 5rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .blog-card.featured { grid-row: auto; }
+      .hobbies-grid { grid-template-columns: 1fr; }
+      .hobby-card:nth-child(1) { grid-column: auto; }
+      #contact::before { font-size: 5rem; }
+    }
+
+  </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
+<!-- Custom cursor dot — no changes needed -->
+<div id="cursor"></div>
 
+
+<!-- ============================================================
+  NAVIGATION BAR
+  CHANGE: Replace "YN" with your own initials (top-left logo).
+  The links scroll to each section automatically.
+============================================================ -->
 <nav>
-  <a href="#hero" class="nav-logo">YN</a>
+  <a href="#hero" class="nav-logo">KG</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#projects">Projects</a></li>
@@ -148,254 +421,588 @@ footer{padding:2rem 3rem;border-top:1px solid var(--border);display:flex;justify
   </ul>
 </nav>
 
-<!-- HERO -->
+
+<!-- ============================================================
+  HERO SECTION  (full-screen opening with background photo)
+
+  BACKGROUND IMAGE:
+    In the CSS above, find:  background-image: url('your-background.jpg');
+    Replace 'your-background.jpg' with your actual image filename.
+    Put the image file in the same folder as this index.html.
+
+  OVERLAY DARKNESS:
+    The dark overlay div below keeps text readable over the image.
+    Adjust the two opacity values (0.85 and 0.50) to taste.
+    Higher = darker overlay, lower = more image visible.
+
+  OTHER EDITS IN THIS SECTION:
+    [ ] Status tag above the name
+    [ ] Your first name and last name
+    [ ] Role / title line
+    [ ] Short personal pitch (1-2 sentences)
+    [ ] 3 stat numbers and their labels
+============================================================ -->
 <section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-tag">Portfolio — 2025</div>
-  <h1 class="hero-name">Your<br><em>Name</em></h1>
-  <p class="hero-sub">Robotics engineer &amp; researcher building intelligent machines that understand the physical world.</p>
-  <div class="hero-scroll">scroll</div>
+
+  <!-- ============================================================
+    Dark overlay — keeps text readable over your background photo.
+    CHANGE: Increase 0.85 / 0.50 to darken, decrease to lighten.
+    Range: 0 = fully transparent, 1 = fully black.
+  ============================================================ -->
+  <div style="
+    position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(
+      to right,
+      rgba(13,13,13,0.85) 0%,
+      rgba(13,13,13,0.50) 100%
+    );
+  "></div>
+
+  <div class="hero-bg-line" style="z-index:1;"></div>
+
+  <div class="hero-left" style="position:relative; z-index:1;">
+
+    <!-- CHANGE: Small label shown above your name -->
+    <div class="hero-tag">Open to Research Collaboration</div>
+
+    <h1 class="hero-name">Kuldeep <em>Gurjar</em></h1>
+
+    <p class="hero-title">Robotics Engineer · AI Researcher · Data Scientist</p>
+
+    <p class="hero-desc">
+      Building intelligent robotic systems at DRDO — from biped locomotion and dual-arm manipulation to LLM-guided autonomy. M.Tech in Automation & Robotics, IISc intern, and published researcher.
+    </p>
+
+    <a href="#about" class="hero-cta">Explore my work <span>→</span></a>
+  </div>
+
+  <div class="hero-right" style="position:relative; z-index:1;">
+
+    <div class="hero-stat">
+      <div class="hero-stat-num">4+</div>
+      <div class="hero-stat-label">Publications</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">5+</div>
+      <div class="hero-stat-label">Years experience</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">10+</div>
+      <div class="hero-stat-label">Robot platforms</div>
+    </div>
+
+  </div>
+
+  <!-- Animated scroll indicator — no changes needed -->
+  <div class="hero-scroll" style="position:relative; z-index:1;">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+
 </section>
 
-<hr class="divider"/>
 
-<!-- ABOUT -->
+<!-- ============================================================
+  ABOUT SECTION
+  CHANGE:
+    [ ] ADD YOUR PHOTO — see detailed comment inside the photo block
+    [ ] Rewrite the 3 bio paragraphs in your own words
+    [ ] Update skill tags to match your actual tech stack
+============================================================ -->
 <section id="about">
-  <p class="section-num fade-up">01 — About</p>
-  <h2 class="section-title fade-up">Who I <em>am</em></h2>
-  <div class="about-grid fade-up">
-    <div class="about-text">
-      <p>I'm a <strong>robotics engineer and researcher</strong> passionate about building systems that perceive, reason, and act in the real world. I work at the intersection of control theory, machine learning, and embedded systems.</p>
-      <p>Currently pursuing my research on autonomous navigation and human-robot interaction. I believe robots should be intuitive collaborators, not just automated tools.</p>
-      <p>When I'm not debugging code at 2am, I'm probably reading sci-fi, experimenting in the kitchen, or getting lost on a trail somewhere.</p>
-      <div class="skill-chips">
-        <span class="chip">ROS2</span><span class="chip">Python</span><span class="chip">C++</span>
-        <span class="chip">PyTorch</span><span class="chip">SLAM</span><span class="chip">Computer Vision</span>
-        <span class="chip">Control Theory</span><span class="chip">Embedded Systems</span>
+  <div class="section-label">About me</div>
+  <h2 class="section-heading">A little about <em>who I am</em></h2>
+  <div class="about-grid">
+
+    <!-- LEFT: Your photo ───────────────────────────────────── -->
+    <div class="about-img-wrap fade-in">
+
+      <!--
+        CHANGE: ADD YOUR PHOTO HERE
+        ────────────────────────────────────────────────────
+        Step 1: Delete the entire placeholder block below
+                (from <div class="about-img-placeholder">
+                 to its closing </div>)
+
+        Step 2: Replace it with this, using your image filename:
+
+            <img
+              src="photo.jpg"
+              alt="Your Name"
+              style="width:100%; aspect-ratio:3/4; object-fit:cover; display:block;"
+            />
+
+        Step 3: Put your photo file (e.g. photo.jpg or photo.png)
+                in the SAME FOLDER as this index.html file.
+
+        Tips:
+          - Portrait orientation works best (taller than wide)
+          - Face centered in the upper portion looks great
+          - Supported formats: .jpg  .jpeg  .png  .webp
+        ────────────────────────────────────────────────────
+      -->
+      <div class="about-img-placeholder">
+        <div class="about-img-icon">◉</div>
+        <span>add your photo here</span>
       </div>
+
     </div>
-    <div class="about-facts">
-      <div class="fact-row"><span class="fact-key">Based in</span><span class="fact-val">Hyderabad, India</span></div>
-      <div class="fact-row"><span class="fact-key">Field</span><span class="fact-val">Robotics &amp; AI</span></div>
-      <div class="fact-row"><span class="fact-key">Education</span><span class="fact-val">Your University</span></div>
-      <div class="fact-row"><span class="fact-key">Status</span><span class="fact-val" style="color:var(--accent);">Open to opportunities</span></div>
-      <div class="fact-row"><span class="fact-key">Languages</span><span class="fact-val">English, Telugu, Hindi</span></div>
+
+    <!-- RIGHT: Bio text ─────────────────────────────────────── -->
+    <div class="about-text fade-in">
+
+      <!-- CHANGE: Opening line — introduces you (displayed larger) -->
+      <p>
+        Hi, I'm <strong>Kuldeep Gurjar</strong> — a robotics engineer and AI researcher working at the Defence Research &amp; Development Organisation (DRDO), Pune, with a focus on intelligent robotic systems that operate in real-world, safety-critical environments.
+      </p>
+
+      <p>
+        Currently serving as Data Scientist (RDE Eng.) at DRDO, I work on upper-body dual-arm robotic systems, biped locomotion, reinforcement learning, and the integration of LLMs &amp; VLMs for robotic control. I hold an M.Tech in Automation and Robotics from DIAT, Pune, and have research experience from the Robert Bosch Centre for Cyber-Physical Systems at IISc Bangalore.
+      </p>
+
+      <p>
+        My work spans the full stack — from formal methods and signal temporal logic to hardware deployment on Nvidia Jetson AGX Orin, UR10 manipulators, and DRDO's BRS1 biped. I've competed in national kart racing championships and believe the best engineering is equal parts rigour and creativity.
+      </p>
+
+      <div class="skills-row">
+        <span class="skill-tag">ROS1 &amp; ROS2</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">C++</span>
+        <span class="skill-tag">PyTorch</span>
+        <span class="skill-tag">TensorFlow</span>
+        <span class="skill-tag">Reinforcement Learning</span>
+        <span class="skill-tag">Deep Learning</span>
+        <span class="skill-tag">Computer Vision</span>
+        <span class="skill-tag">LLM &amp; VLM</span>
+        <span class="skill-tag">Gazebo / MuJoCo / Isaac Sim</span>
+        <span class="skill-tag">Signal Temporal Logic</span>
+        <span class="skill-tag">Path Planning</span>
+        <span class="skill-tag">SLAM</span>
+        <span class="skill-tag">EEG / Radar (FMCW)</span>
+        <span class="skill-tag">Nvidia Jetson AGX Orin</span>
+        <span class="skill-tag">MatLab</span>
+      </div>
+
     </div>
   </div>
 </section>
 
-<hr class="divider"/>
 
-<!-- PROJECTS -->
-<section id="projects">
-  <p class="section-num fade-up">02 — Projects</p>
-  <h2 class="section-title fade-up">Things I've <em>built</em></h2>
-  <div class="projects-grid fade-up">
+<!-- ============================================================
+  PROJECTS SECTION
+  CHANGE: Replace each project card with your real projects.
+  Each card: number · title · description · tech tags · link.
 
-    <div class="project-card">
-      <div class="project-num">01</div>
-      <div class="project-name">Autonomous Robot Navigation</div>
-      <p class="project-desc">A full-stack ROS2-based navigation system with real-time SLAM, obstacle avoidance, and WiFi-based remote control via a mobile web interface.</p>
-      <div class="project-tags"><span class="ptag">ROS2</span><span class="ptag">SLAM</span><span class="ptag">Python</span></div>
-      <a href="#" class="project-link">View project <span class="arrow">↗</span></a>
+  To ADD a project: copy any project-card block, paste inside
+    .projects-grid, and update the number, title, desc, tags, link.
+  To REMOVE: delete the entire project-card block.
+============================================================ -->
+<div id="projects">
+  <div class="inner">
+    <div class="section-label">Work</div>
+    <h2 class="section-heading">Selected <em>projects</em></h2>
+    <div class="projects-grid fade-in">
+
+      <!-- PROJECT 1 -->
+      <div class="project-card">
+        <div class="project-num">01</div>
+        <h3 class="project-title">Biped Robot Locomotion & Control</h3>
+        <p class="project-desc">
+          Controller implementation for stable walking of the DRDO BRS1 biped, including reinforcement learning for locomotion and full software stack development.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Reinforcement Learning</span>
+          <span class="project-tag">ROS2</span>
+          <span class="project-tag">Python</span>
+          <span class="project-tag">C++</span>
+        </div>
+        <a href="#" class="project-link">DRDO — Ongoing →</a>
+      </div>
+
+      <!-- PROJECT 2 -->
+      <div class="project-card">
+        <div class="project-num">02</div>
+        <h3 class="project-title">Dual-Arm Robotic System</h3>
+        <p class="project-desc">
+          Upper-body dual-arm motion planning with admittance control for DRDO's robotic platform, integrating LLM & VLM for task-level reasoning and manipulation.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Motion Planning</span>
+          <span class="project-tag">LLM / VLM</span>
+          <span class="project-tag">Admittance Control</span>
+          <span class="project-tag">UR10</span>
+        </div>
+        <a href="#" class="project-link">DRDO — Ongoing →</a>
+      </div>
+
+      <!-- PROJECT 3 -->
+      <div class="project-card">
+        <div class="project-num">03</div>
+        <h3 class="project-title">RL with Signal Temporal Logic</h3>
+        <p class="project-desc">
+          Reward shaping for reinforcement learning using funnel-based control and Signal Temporal Logic. Proposed the time-aware TD3PG algorithm for time-sensitive robot tasks.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">RL / TD3PG</span>
+          <span class="project-tag">Signal Temporal Logic</span>
+          <span class="project-tag">Formal Methods</span>
+          <span class="project-tag">Python</span>
+        </div>
+        <a href="#" class="project-link">IISc — Robert Bosch Centre →</a>
+      </div>
+
+      <!-- PROJECT 4 -->
+      <div class="project-card">
+        <div class="project-num">04</div>
+        <h3 class="project-title">EEG-Based Brain-Robot Interface</h3>
+        <p class="project-desc">
+          Novel classification of upper-limb motor imagery tasks from EEG signals using ratio of band power (RBP) features — nominated best paper at ICARM 2024, Tokyo.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">EEG</span>
+          <span class="project-tag">Machine Learning</span>
+          <span class="project-tag">Scikit-Learn</span>
+          <span class="project-tag">Python</span>
+        </div>
+        <a href="https://doi.org/10.1109/ICARM62033.2024.10715808" class="project-link">View paper →</a>
+      </div>
+
+      <!-- PROJECT 5 -->
+      <div class="project-card">
+        <div class="project-num">05</div>
+        <h3 class="project-title">Drone State Identification via RF</h3>
+        <p class="project-desc">
+          Wavelet transform-based system for identifying drone flight states (hovering, recording, flying) from radio-frequency signals with Random Forest classification.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Wavelet Transform</span>
+          <span class="project-tag">Random Forest</span>
+          <span class="project-tag">Radar / RF</span>
+          <span class="project-tag">Python</span>
+        </div>
+        <a href="https://doi.org/10.2514/1.I011389" class="project-link">View paper →</a>
+      </div>
+
+      <!-- PROJECT 6 -->
+      <div class="project-card">
+        <div class="project-num">06</div>
+        <h3 class="project-title">Path Planning & Mobile Robotics</h3>
+        <p class="project-desc">
+          Implemented Dijkstra, A*, and RRT path planning; RGB-D SLAM with Kinect; MPC for quadcopter trajectory tracking; and ROS-based semi-autonomous mobile robot.
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">ROS</span>
+          <span class="project-tag">Gazebo</span>
+          <span class="project-tag">SLAM</span>
+          <span class="project-tag">MPC</span>
+          <span class="project-tag">Turtlebot3</span>
+        </div>
+        <a href="#" class="project-link">Course projects →</a>
+      </div>
+
     </div>
-
-    <div class="project-card">
-      <div class="project-num">02</div>
-      <div class="project-name">Gesture-Controlled Arm</div>
-      <p class="project-desc">A 6-DOF robotic arm controlled by hand gestures using MediaPipe and inverse kinematics, running on a Raspberry Pi 4.</p>
-      <div class="project-tags"><span class="ptag">OpenCV</span><span class="ptag">MediaPipe</span><span class="ptag">C++</span></div>
-      <a href="#" class="project-link">View project <span class="arrow">↗</span></a>
-    </div>
-
-    <div class="project-card">
-      <div class="project-num">03</div>
-      <div class="project-name">QR WiFi Bridge</div>
-      <p class="project-desc">A utility to generate dual QR codes — one for WiFi connection, one for robot UI — enabling instant mobile access to any robot on a local network.</p>
-      <div class="project-tags"><span class="ptag">Python</span><span class="ptag">Networking</span></div>
-      <a href="#" class="project-link">View project <span class="arrow">↗</span></a>
-    </div>
-
-    <div class="project-card" style="opacity:.5;border-style:dashed;">
-      <div class="project-num">04</div>
-      <div class="project-name">Your Next Project</div>
-      <p class="project-desc">Add your own projects here. Each card supports a title, description, tech tags, and a link to GitHub, a demo, or a write-up.</p>
-      <div class="project-tags"><span class="ptag">Add tags</span></div>
-      <a href="#" class="project-link">View project <span class="arrow">↗</span></a>
-    </div>
-
   </div>
-</section>
+</div>
 
-<hr class="divider"/>
 
-<!-- RESEARCH -->
+<!-- ============================================================
+  RESEARCH SECTION
+  CHANGE: Replace each item with your actual papers.
+  Each item: year · title · venue · short abstract · status badge.
+
+  Badge options (change the text inside the <div>):
+    "Published"  |  "Preprint"  |  "In Review"  |  "Thesis"
+
+  To ADD: copy any research-item block and paste inside .research-list.
+  To REMOVE: delete the entire research-item block.
+============================================================ -->
 <section id="research">
-  <p class="section-num fade-up">03 — Research</p>
-  <h2 class="section-title fade-up">What I <em>study</em></h2>
-  <div class="research-list fade-up">
-    <div class="research-item">
-      <div class="research-year">2025</div>
-      <div>
-        <div class="research-title">Efficient SLAM for Low-Cost Mobile Robots in Indoor Environments</div>
-        <div class="research-venue">Conference / Journal Name — City, Country</div>
-      </div>
-      <div class="research-badge pub">Published</div>
-    </div>
-    <div class="research-item">
+  <div class="section-label">Academia</div>
+  <h2 class="section-heading">Research &amp; <em>publications</em></h2>
+  <div class="research-list">
+
+    <!-- PAPER 1 -->
+    <div class="research-item fade-in">
       <div class="research-year">2024</div>
       <div>
-        <div class="research-title">Human-Robot Interaction via Natural Language Commands in Unstructured Spaces</div>
-        <div class="research-venue">Workshop on HRI — XYZ Conference</div>
+        <div class="research-title">Classifying EEG-based Upper Limb Motor Imagery Tasks for Brain-Robot Interface-based System Development</div>
+        <div class="research-venue">ICARM 2024 — International Conference on Advanced Robotics and Mechatronics, Tokyo, Japan</div>
+        <div class="research-abstract">
+          Ratio of band power (RBP) features from EEG signals are proposed to classify distinct upper-limb motor imagery tasks, enabling brain-driven robotic control. Nominated for best conference paper.
+        </div>
       </div>
-      <div class="research-badge">Preprint</div>
+      <div class="research-badge">Best Paper Nominee</div>
     </div>
-    <div class="research-item">
+
+    <!-- PAPER 2 -->
+    <div class="research-item fade-in">
       <div class="research-year">2024</div>
       <div>
-        <div class="research-title">Real-Time Obstacle Prediction Using Sparse LiDAR and Deep Learning</div>
-        <div class="research-venue">Thesis / Dissertation — Your University</div>
+        <div class="research-title">ResNet50-based Automated Method for Monocular Depth Estimation using Video</div>
+        <div class="research-venue">IEEE CONECCT 2024 — International Conference on Electronics, Computing and Communication Technologies, Bangalore</div>
+        <div class="research-abstract">
+          A ResNet50-based pipeline for monocular depth estimation from video, enabling depth perception on single-camera robotic platforms without stereo hardware.
+        </div>
       </div>
-      <div class="research-badge pub">Published</div>
+      <div class="research-badge">Published</div>
     </div>
+
+    <!-- PAPER 3 -->
+    <div class="research-item fade-in">
+      <div class="research-year">2024</div>
+      <div>
+        <div class="research-title">Advanced Wavelet Transform-Based Automated System for Drone State Identification Using Radio-Frequency Signal</div>
+        <div class="research-venue">Journal of Aerospace Information Systems (JAIS), Vol. 21, No. 11, 2024</div>
+        <div class="research-abstract">
+          An automated system using wavelet transforms and Random Forest classifiers to detect and identify drone states (hovering, flying, recording) from RF signals across different backgrounds.
+        </div>
+      </div>
+      <div class="research-badge">Published</div>
+    </div>
+
+    <!-- PAPER 4 -->
+    <div class="research-item fade-in">
+      <div class="research-year">2024</div>
+      <div>
+        <div class="research-title">Non-Invasive Age and Gender Classification of Children Using Radar-Based Vital Sign Analysis</div>
+        <div class="research-venue">Internet of Things and Cyber-Physical Systems (Under Review)</div>
+        <div class="research-abstract">
+          IWR FMCW radar vital sign data is used with machine learning to non-invasively classify age and gender of children — a novel application of radar sensing in pediatric monitoring.
+        </div>
+      </div>
+      <div class="research-badge">In Review</div>
+    </div>
+
   </div>
 </section>
 
-<hr class="divider"/>
 
-<!-- HOBBIES -->
-<section id="hobbies">
-  <p class="section-num fade-up">04 — Hobbies</p>
-  <h2 class="section-title fade-up">Beyond the <em>lab</em></h2>
-  <div class="hobbies-grid fade-up">
-    <div class="hobby-card">
-      <div class="hobby-bg" style="background:radial-gradient(circle at 80% 80%,rgba(200,240,110,.05),transparent 70%);"></div>
-      <span class="hobby-icon">📚</span>
-      <div class="hobby-name">Reading</div>
-      <div class="hobby-desc">Sci-fi, philosophy of mind, and the occasional rabbit-hole technical paper.</div>
-    </div>
-    <div class="hobby-card">
-      <div class="hobby-bg" style="background:radial-gradient(circle at 80% 80%,rgba(240,110,110,.05),transparent 70%);"></div>
-      <span class="hobby-icon">🥾</span>
-      <div class="hobby-name">Hiking</div>
-      <div class="hobby-desc">Trails, mountains, and places with zero Wi-Fi signal.</div>
-    </div>
-    <div class="hobby-card">
-      <div class="hobby-bg" style="background:radial-gradient(circle at 80% 80%,rgba(110,180,240,.05),transparent 70%);"></div>
-      <span class="hobby-icon">🍳</span>
-      <div class="hobby-name">Cooking</div>
-      <div class="hobby-desc">Treating recipes like experiments. Results vary wildly.</div>
-    </div>
-    <div class="hobby-card">
-      <div class="hobby-bg" style="background:radial-gradient(circle at 80% 80%,rgba(200,240,110,.05),transparent 70%);"></div>
-      <span class="hobby-icon">🎸</span>
-      <div class="hobby-name">Music</div>
-      <div class="hobby-desc">Guitar player. Self-taught. Mostly plays the same 4 chords.</div>
-    </div>
-    <div class="hobby-card">
-      <div class="hobby-bg" style="background:radial-gradient(circle at 80% 80%,rgba(240,200,110,.05),transparent 70%);"></div>
-      <span class="hobby-icon">📷</span>
-      <div class="hobby-name">Photography</div>
-      <div class="hobby-desc">Street photography and architecture. Gear: one old mirrorless camera.</div>
-    </div>
-    <div class="hobby-card" style="border-style:dashed;opacity:.4;">
-      <span class="hobby-icon">＋</span>
-      <div class="hobby-name">Your hobby</div>
-      <div class="hobby-desc">Edit this card to add something you love doing.</div>
+<!-- ============================================================
+  HOBBIES SECTION
+  CHANGE: Replace cards with your actual hobbies.
+  Each card: emoji icon · name · short description.
+
+  The FIRST card is always full-width — use it for your main hobby.
+  Remaining cards split into a 2-column grid.
+
+  To ADD: copy any hobby-card block and paste here.
+  To REMOVE: delete the entire hobby-card block.
+============================================================ -->
+<div id="hobbies">
+  <div class="inner">
+    <div class="section-label">Beyond work</div>
+    <h2 class="section-heading">Things I <em>love</em></h2>
+    <div class="hobbies-grid fade-in">
+
+      <!-- HOBBY 1 — full-width card -->
+      <div class="hobby-card">
+        <span class="hobby-icon">🤖</span>
+        <div class="hobby-name">Competitive Robotics</div>
+        <p class="hobby-desc">
+          From designing IC-engine and electric go-karts for national and international championships to working hands-on with biped robots and manipulators — I've always believed the best way to learn engineering is to build something that has to survive the real world. Racing taught me that failure is just the last test before the one that works.
+        </p>
+      </div>
+
+      <!-- HOBBY 2 -->
+      <div class="hobby-card">
+        <span class="hobby-icon">📡</span>
+        <div class="hobby-name">Signal Processing & RF</div>
+        <p class="hobby-desc">
+          Fascinated by the information hidden in radar and EEG signals. Whether it's FMCW radar for vital sign detection or brainwave classification for robot control, there's something deeply satisfying about extracting meaning from noise.
+        </p>
+      </div>
+
+      <!-- HOBBY 3 -->
+      <div class="hobby-card">
+        <span class="hobby-icon">📚</span>
+        <div class="hobby-name">Teaching & Mentoring</div>
+        <p class="hobby-desc">
+          Delivered hands-on ROS tutorials for postgraduate students at DIAT. Teaching forces you to truly understand what you know — and to spot the gaps you didn't know you had.
+        </p>
+      </div>
+
+      <!-- HOBBY 4 -->
+      <div class="hobby-card">
+        <span class="hobby-icon">🧠</span>
+        <div class="hobby-name">AI & Formal Methods</div>
+        <p class="hobby-desc">
+          Spending free time exploring the intersection of formal verification and learning — using temporal logic to give robots provably correct behaviour, not just statistically likely behaviour.
+        </p>
+      </div>
+
     </div>
   </div>
-</section>
+</div>
 
-<hr class="divider"/>
 
-<!-- BLOG -->
+<!-- ============================================================
+  BLOG SECTION
+  CHANGE: Replace each card with links to your actual posts.
+  The FEATURED card (first) is larger — use it for your best post.
+
+  For each card:
+    [ ] href="#" → replace with your real post URL
+    [ ] Date, title, and excerpt text
+
+  If you have no blog yet: delete this entire section and remove
+  <li><a href="#blog">Blog</a></li> from the nav at the top.
+============================================================ -->
 <section id="blog">
-  <p class="section-num fade-up">05 — Blog</p>
-  <h2 class="section-title fade-up">Things I <em>write</em></h2>
-  <div class="blog-list fade-up">
-    <a href="#" class="blog-post">
-      <div>
-        <div class="blog-post-title">How I built a WiFi QR system for my robot</div>
-        <div class="blog-post-meta">March 2025 · 5 min read</div>
-      </div>
-      <span class="blog-post-tag">Robotics</span>
+  <div class="section-label">Writing</div>
+  <h2 class="section-heading">From the <em>blog</em></h2>
+  <div class="blog-grid fade-in">
+
+    <!-- FEATURED POST — large 2-row card ───────────────────── -->
+    <a href="#" class="blog-card featured">
+      <div class="blog-date">2024</div>
+      <div class="blog-title">Why I stopped fighting ROS and started appreciating its philosophy</div>
+      <p class="blog-excerpt">
+        After years of working with ROS1 and ROS2 across mobile robots, manipulators, and bipeds, I've come to see the framework's verbosity not as friction but as encoded wisdom about distributed robotic systems.
+      </p>
+      <div class="blog-read">Read essay →</div>
     </a>
-    <a href="#" class="blog-post">
-      <div>
-        <div class="blog-post-title">SLAM on a budget: lessons from cheap hardware</div>
-        <div class="blog-post-meta">January 2025 · 8 min read</div>
-      </div>
-      <span class="blog-post-tag">Research</span>
+
+    <a href="#" class="blog-card">
+      <div class="blog-date">2024</div>
+      <div class="blog-title">Reward shaping with Signal Temporal Logic</div>
+      <p class="blog-excerpt">How funnel-based control and STL can give reinforcement learning agents formally verifiable behaviour.</p>
+      <div class="blog-read">Read →</div>
     </a>
-    <a href="#" class="blog-post">
-      <div>
-        <div class="blog-post-title">Why I think ROS2 is finally ready for production</div>
-        <div class="blog-post-meta">November 2024 · 6 min read</div>
-      </div>
-      <span class="blog-post-tag">Opinion</span>
+
+    <a href="#" class="blog-card">
+      <div class="blog-date">2024</div>
+      <div class="blog-title">Notes on deploying LLMs on robots</div>
+      <p class="blog-excerpt">What actually works — and what doesn't — when using large language models for task-level robot control.</p>
+      <div class="blog-read">Read →</div>
     </a>
-  </div>
-  <div class="coming-soon">
-    <span class="big">More soon</span>
-    Writing regularly about robotics, engineering, and whatever I'm currently obsessed with.
+
+    <a href="#" class="blog-card">
+      <div class="blog-date">2023</div>
+      <div class="blog-title">EEG for robotics: a practical intro</div>
+      <p class="blog-excerpt">Getting started with brain-computer interfaces for robot control, from signal acquisition to classification.</p>
+      <div class="blog-read">Read →</div>
+    </a>
+
   </div>
 </section>
 
-<hr class="divider"/>
 
-<!-- CONTACT -->
-<section id="contact">
-  <p class="section-num fade-up">06 — Contact</p>
-  <h2 class="section-title fade-up">Let's <em>talk</em></h2>
-  <div class="contact-inner fade-up">
-    <p class="contact-intro">I'm always open to interesting conversations, collaborations, research discussions, or just a good question. Reach out through any of the channels below.</p>
-    <div class="contact-links">
-      <a href="mailto:you@example.com" class="contact-link">
-        <div class="contact-link-left"><span class="contact-link-icon">✉</span><span class="contact-link-label">Email</span></div>
-        <span class="contact-link-value">you@example.com</span>
-        <span class="contact-link-arrow">↗</span>
-      </a>
-      <a href="https://github.com/yourusername" target="_blank" class="contact-link">
-        <div class="contact-link-left"><span class="contact-link-icon">⌥</span><span class="contact-link-label">GitHub</span></div>
-        <span class="contact-link-value">github.com/yourusername</span>
-        <span class="contact-link-arrow">↗</span>
-      </a>
-      <a href="https://linkedin.com/in/yourusername" target="_blank" class="contact-link">
-        <div class="contact-link-left"><span class="contact-link-icon">◈</span><span class="contact-link-label">LinkedIn</span></div>
-        <span class="contact-link-value">linkedin.com/in/yourusername</span>
-        <span class="contact-link-arrow">↗</span>
-      </a>
-      <a href="https://twitter.com/yourusername" target="_blank" class="contact-link">
-        <div class="contact-link-left"><span class="contact-link-icon">◇</span><span class="contact-link-label">X / Twitter</span></div>
-        <span class="contact-link-value">@yourusername</span>
-        <span class="contact-link-arrow">↗</span>
-      </a>
+<!-- ============================================================
+  CONTACT SECTION
+  CHANGE:
+    [ ] Intro paragraph text
+    [ ] Email: update href="mailto:..." AND the visible text (both!)
+    [ ] GitHub: update the href URL AND the visible text
+    [ ] LinkedIn: update the href URL AND the visible text
+    [ ] Twitter/X: update the href URL AND the @handle text
+
+  TO MAKE THE FORM SEND REAL EMAILS (free, no backend needed):
+    1. Sign up at https://formspree.io  (free plan: 50 emails/month)
+    2. Create a new form → copy your endpoint URL
+       (looks like:  https://formspree.io/f/xabcdefg)
+    3. Change the opening <form> tag below from:
+         <form class="contact-form" onsubmit="handleSubmit(event)">
+       to:
+         <form class="contact-form" action="https://formspree.io/f/xabcdefg" method="POST">
+    4. Delete the handleSubmit() function in the JS section below
+============================================================ -->
+<div id="contact">
+  <div class="inner">
+    <div class="section-label">Get in touch</div>
+    <h2 class="section-heading">Let's <em>connect</em></h2>
+    <div class="contact-grid">
+
+      <!-- LEFT: Intro + social links ──────────────────────── -->
+      <div>
+        <p class="contact-intro">
+          Whether you want to collaborate on robotics research, discuss reinforcement learning or formal methods, or explore opportunities at the intersection of AI and real-world robotic systems — I'm always happy to connect.
+        </p>
+        <div class="contact-links">
+
+          <a href="mailto:kuldeeplakhansons@gmail.com" class="contact-link">
+            <div class="contact-link-icon">✉</div>
+            kuldeeplakhansons@gmail.com
+          </a>
+
+          <a href="https://scholar.google.com" target="_blank" class="contact-link">
+            <div class="contact-link-icon">Gs</div>
+            Google Scholar Profile
+          </a>
+
+          <a href="https://github.com/" target="_blank" class="contact-link">
+            <div class="contact-link-icon">⌥</div>
+            github.com/kuldeep-gurjar
+          </a>
+
+          <a href="https://linkedin.com/in/" target="_blank" class="contact-link">
+            <div class="contact-link-icon">in</div>
+            linkedin.com/in/kuldeep-gurjar
+          </a>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: Contact form ──────────────────────────────── -->
+      <!-- See Formspree instructions above to make this send real emails -->
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-field">
+          <label class="form-label" for="fname">Name</label>
+          <input class="form-input" id="fname" type="text" placeholder="Your name" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="femail">Email</label>
+          <input class="form-input" id="femail" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="fmessage">Message</label>
+          <textarea class="form-textarea" id="fmessage" placeholder="What's on your mind?" required></textarea>
+        </div>
+        <button class="form-btn" type="submit">Send message →</button>
+      </form>
+
     </div>
   </div>
-</section>
+</div>
 
+
+<!-- ============================================================
+  FOOTER
+  CHANGE: Replace "Your Name" with your actual name.
+          Update the year if needed.
+============================================================ -->
 <footer>
-  <span>© 2025 Your Name</span>
-  <span>Built with vanilla HTML · Hosted on GitHub Pages</span>
+  <span class="footer-copy">© 2025 Kuldeep Gurjar. Built with HTML · Hosted on GitHub Pages.</span>
+  <a href="#hero" class="footer-back">↑ Back to top</a>
 </footer>
 
-<script>
-const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top = e.clientY + 'px';
-});
-document.querySelectorAll('a,button,.project-card,.hobby-card,.fact-row').forEach(el => {
-  el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-  el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-});
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), 80);
+
+<!-- ============================================================
+  JAVASCRIPT — generally no changes needed.
+  Only change: if you switch to Formspree, delete handleSubmit().
+============================================================ -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Custom cursor tracking
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
   });
-}, {threshold: 0.1});
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-</script>
-</body>
-</html>
+  document.querySelectorAll('a, button, .project-card, .hobby-card, .research-item').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // Scroll-triggered fade-in animations
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Contact form — shows a visual success state only (no email sent by default).
+  // DELETE this entire function if you switch to Formspree.
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-btn');
+    btn.textContent = 'Sent ✓';
+    btn.style.borderColor = 'var(--accent3)';
+    btn

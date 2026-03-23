@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ================================================
+    CHANGE: Update this to your real name
+  ================================================ -->
+  <title>Kuldeep Gurjar — Portfolio</title>
+
+  <!-- Google Fonts — no changes needed here -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ================================================
+       CHANGE: Customize your color palette here
+       --accent  = golden highlight color
+       --accent2 = warm orange used for hover effects
+       --accent3 = teal used for research badges
+    ================================================ */
+    :root {
+      --bg:      #0d0d0d;   /* main background */
+      --bg2:     #141414;   /* slightly lighter background */
+      --bg3:     #1a1a1a;   /* card backgrounds */
+      --ink:     #f0ece4;   /* primary text */
+      --ink2:    #9e9a93;   /* secondary / muted text */
+      --ink3:    #5c5a56;   /* very muted text and borders */
+      --accent:  #e8c97a;   /* gold — primary accent */
+      --accent2: #c46a3a;   /* orange — secondary accent */
+      --accent3: #7ab8a8;   /* teal — used in research section */
+      --serif:   'Cormorant Garamond', Georgia, serif;
+      --sans:    'Syne', sans-serif;
+      --mono:    'DM Mono', monospace;
+      --max:     1100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.7;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* Custom cursor dot */
+    #cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s;
+      mix-blend-mode: difference;
+    }
+    #cursor.big { width: 40px; height: 40px; opacity: 0.3; }
+
+    /* Subtle noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.35;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(13,13,13,0.95), transparent);
+    }
+    .nav-logo {
+      font-family: var(--sans); font-weight: 800; font-size: 1rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--ink2); text-decoration: none;
+      transition: color 0.2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--accent); transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; padding: 0 3rem; gap: 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg-line {
+      position: absolute; top: 0; bottom: 0; left: 50%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--ink3) 30%, var(--ink3) 70%, transparent);
+      opacity: 0.3;
+    }
+    .hero-left { padding-top: 6rem; }
+    .hero-tag {
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 0.25rem;
+    }
+    .hero-name em { font-style: italic; color: var(--accent); }
+    .hero-title {
+      font-family: var(--sans); font-size: 0.85rem; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--ink2); margin-bottom: 2rem;
+    }
+    .hero-desc { font-size: 1.1rem; color: var(--ink2); max-width: 420px; line-height: 1.8; margin-bottom: 2.5rem; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--bg); background: var(--accent);
+      padding: 0.85rem 2rem; text-decoration: none; transition: background 0.2s, gap 0.3s;
+    }
+    .hero-cta:hover { background: var(--ink); gap: 1.25rem; }
+    .hero-right {
+      display: flex; flex-direction: column; gap: 2rem;
+      padding-top: 6rem; align-items: flex-end;
+    }
+    .hero-stat { text-align: right; border-right: 1px solid var(--ink3); padding-right: 1.5rem; }
+    .hero-stat-num { font-family: var(--serif); font-size: 3.5rem; font-weight: 300; color: var(--accent); line-height: 1; }
+    .hero-stat-label { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--ink3);
+    }
+    .scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--ink3), transparent);
+      animation: scrollDown 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollDown {
+      0%   { transform: scaleY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* SHARED SECTION STYLES */
+    section { padding: 7rem 3rem; max-width: var(--max); margin: 0 auto; }
+    .section-label {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .section-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+    .section-heading {
+      font-family: var(--serif); font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300; line-height: 1.1; margin-bottom: 3.5rem;
+    }
+    .section-heading em { font-style: italic; color: var(--accent); }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 5rem; align-items: start; }
+    .about-img-wrap { position: relative; }
+    .about-img-placeholder {
+      width: 100%; aspect-ratio: 3/4; background: var(--bg3);
+      border: 1px solid var(--ink3);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.75rem;
+      color: var(--ink3); font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em;
+      position: relative; overflow: hidden;
+    }
+    .about-img-placeholder::after {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 21px);
+    }
+    .about-img-icon { font-size: 2.5rem; opacity: 0.3; }
+    .about-img-wrap::before {
+      content: ''; position: absolute; top: 12px; left: 12px; right: -12px; bottom: -12px;
+      border: 1px solid var(--accent); opacity: 0.25; z-index: -1;
+    }
+    .about-text p { color: var(--ink2); margin-bottom: 1.5rem; font-size: 1.05rem; line-height: 1.9; }
+    .about-text p:first-child { font-size: 1.25rem; color: var(--ink); font-weight: 300; }
+    .skills-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+    .skill-tag {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; border: 1px solid var(--ink3);
+      color: var(--ink2); padding: 0.3rem 0.75rem; transition: border-color 0.2s, color 0.2s;
+    }
+    .skill-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* PROJECTS */
+    #projects { background: var(--bg2); max-width: 100%; padding: 7rem 0; }
+    #projects > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--ink3); border: 1px solid var(--ink3);
+    }
+    .project-card {
+      background: var(--bg2); padding: 2rem;
+      transition: background 0.3s; position: relative; overflow: hidden;
+    }
+    .project-card::before {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left; transition: transform 0.4s;
+    }
+    .project-card:hover { background: var(--bg3); }
+    .project-card:hover::before { transform: scaleX(1); }
+    .project-num { font-family: var(--mono); font-size: 0.65rem; color: var(--ink3); letter-spacing: 0.1em; margin-bottom: 1.25rem; }
+    .project-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; margin-bottom: 0.75rem; line-height: 1.2; }
+    .project-desc { font-size: 0.9rem; color: var(--ink2); line-height: 1.7; margin-bottom: 1.5rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+    .project-tag {
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
+      text-transform: uppercase; background: var(--bg); color: var(--ink3); padding: 0.2rem 0.6rem;
+    }
+    .project-link {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.5rem; transition: gap 0.2s;
+    }
+    .project-link:hover { gap: 0.9rem; }
+
+    /* RESEARCH */
+    .research-list { display: flex; flex-direction: column; gap: 0; }
+    .research-item {
+      display: grid; grid-template-columns: 80px 1fr auto;
+      gap: 2rem; align-items: start;
+      padding: 2rem 0; border-bottom: 1px solid var(--bg3);
+      transition: padding-left 0.3s; cursor: default;
+    }
+    .research-item:hover { padding-left: 1rem; }
+    .research-year { font-family: var(--mono); font-size: 0.72rem; color: var(--ink3); letter-spacing: 0.08em; padding-top: 0.2rem; }
+    .research-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; margin-bottom: 0.4rem; }
+    .research-venue { font-family: var(--mono); font-size: 0.7rem; color: var(--accent3); letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+    .research-abstract { font-size: 0.88rem; color: var(--ink2); line-height: 1.7; }
+    .research-badge {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em;
+      text-transform: uppercase; border: 1px solid var(--accent3);
+      color: var(--accent3); padding: 0.25rem 0.6rem; white-space: nowrap;
+      height: fit-content; margin-top: 0.3rem;
+    }
+
+    /* HOBBIES */
+    #hobbies { background: var(--bg2); max-width: 100%; padding: 7rem 0; }
+    #hobbies > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
+    .hobbies-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .hobby-card {
+      padding: 2.5rem; border: 1px solid var(--bg3);
+      position: relative; overflow: hidden; transition: border-color 0.3s;
+    }
+    .hobby-card:hover { border-color: var(--ink3); }
+    .hobby-card:nth-child(1) { grid-column: span 2; }
+    .hobby-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .hobby-name { font-family: var(--sans); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .hobby-desc { font-size: 0.9rem; color: var(--ink2); line-height: 1.75; }
+
+    /* BLOG */
+    .blog-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; }
+    .blog-card {
+      background: var(--bg2); border: 1px solid var(--bg3); padding: 2rem;
+      transition: border-color 0.3s, transform 0.3s; text-decoration: none;
+      display: block; color: inherit;
+    }
+    .blog-card:hover { border-color: var(--ink3); transform: translateY(-3px); }
+    .blog-card.featured { grid-row: span 2; background: var(--bg3); }
+    .blog-date { font-family: var(--mono); font-size: 0.65rem; color: var(--ink3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+    .blog-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; line-height: 1.25; margin-bottom: 0.75rem; color: var(--ink); }
+    .blog-card.featured .blog-title { font-size: 2rem; margin-bottom: 1rem; }
+    .blog-excerpt { font-size: 0.88rem; color: var(--ink2); line-height: 1.7; }
+    .blog-read { margin-top: 1.25rem; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; }
+
+    /* CONTACT */
+    #contact { background: var(--bg2); max-width: 100%; padding: 7rem 0; position: relative; overflow: hidden; }
+    #contact::before {
+      content: 'CONTACT'; position: absolute; bottom: -2rem; right: -1rem;
+      font-family: var(--sans); font-size: 12rem; font-weight: 800;
+      color: var(--bg3); letter-spacing: -0.04em;
+      pointer-events: none; user-select: none; line-height: 1;
+    }
+    #contact > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; position: relative; z-index: 1; }
+    .contact-intro { font-size: 1.1rem; color: var(--ink2); line-height: 1.8; margin-bottom: 2.5rem; }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem; text-decoration: none;
+      color: var(--ink2); font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.08em;
+      transition: color 0.2s; padding-bottom: 1rem; border-bottom: 1px solid var(--bg3);
+    }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link-icon {
+      width: 36px; height: 36px; border: 1px solid var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: border-color 0.2s;
+    }
+    .contact-link:hover .contact-link-icon { border-color: var(--accent); }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
+    .form-input, .form-textarea {
+      background: var(--bg); border: 1px solid var(--bg3); color: var(--ink);
+      font-family: var(--serif); font-size: 1rem; padding: 0.75rem 1rem; outline: none;
+      transition: border-color 0.2s; resize: none;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--ink3); }
+    .form-textarea { height: 120px; }
+    .form-btn {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent);
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 0.9rem 2rem; cursor: pointer;
+      transition: background 0.2s, color 0.2s; align-self: flex-start;
+    }
+    .form-btn:hover { background: var(--accent); color: var(--bg); }
+
+    /* FOOTER */
+    footer {
+      padding: 2rem 3rem; border-top: 1px solid var(--bg3);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-family: var(--mono); font-size: 0.65rem; color: var(--ink3); letter-spacing: 0.08em; }
+    .footer-back {
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--ink3); text-decoration: none;
+      transition: color 0.2s; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .footer-back:hover { color: var(--accent); }
+
+    /* SCROLL ANIMATION */
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { gap: 1.25rem; }
+      #hero { grid-template-columns: 1fr; padding: 0 1.5rem; }
+      .hero-right { flex-direction: row; align-items: center; padding-top: 0; }
+      .hero-bg-line { display: none; }
+      section { padding: 5rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .blog-card.featured { grid-row: auto; }
+      .hobbies-grid { grid-template-columns: 1fr; }
+      .hobby-card:nth-child(1) { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Custom cursor dot — no changes needed -->
+<div id="cursor"></div>
+
+
+<!-- ============================================================
+  NAVIGATION BAR
+  CHANGE: Update "YN" to your own initials
+============================================================ -->
+<nav>
+  <a href="#hero" class="nav-logo">KD</a> <!-- CHANGE: Your initials -->
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#hobbies">Hobbies</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+
+<!-- ============================================================
+  HERO SECTION
+  CHANGE: Your name, tagline, short description, and stats
+============================================================ -->
+<section id="hero">
+  <div class="hero-bg-line"></div>
+
+  <div class="hero-left">
+    <!-- CHANGE: The small label above your name e.g. "Open to work" or "Portfolio 2025" -->
+    <div class="hero-tag">Available for collaboration</div>
+
+    <!-- CHANGE: Your first name on line 1, last name on line 2 (in italics) -->
+    <h1 class="hero-name">
+      Your <em>Name</em>
+    </h1>
+
+    <!-- CHANGE: Your role/title e.g. "Software Engineer · Designer · Writer" -->
+    <p class="hero-title">Robotics Engineer · Researcher · Creator</p>
+
+    <!-- CHANGE: A one or two sentence summary of who you are -->
+    <p class="hero-desc">
+      I build systems at the intersection of robotics, software, and ideas.
+      Curious by nature, precise by craft.
+    </p>
+
+    <a href="#about" class="hero-cta">Explore my work <span>→</span></a>
+  </div>
+
+  <div class="hero-right">
+    <!-- CHANGE: Replace these three stats with real numbers from your work -->
+    <div class="hero-stat">
+      <div class="hero-stat-num">12</div>        <!-- CHANGE: number of projects -->
+      <div class="hero-stat-label">Projects shipped</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">5</div>          <!-- CHANGE: number of papers -->
+      <div class="hero-stat-label">Papers published</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">3+</div>         <!-- CHANGE: years of experience -->
+      <div class="hero-stat-label">Years experience</div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+
+<!-- ============================================================
+  ABOUT SECTION
+  CHANGE: Photo, bio paragraphs, skills, and quick facts
+============================================================ -->
+<section id="about">
+  <div class="section-label">About me</div>
+  <h2 class="section-heading">A little about <em>who I am</em></h2>
+
+  <div class="about-grid">
+
+    <!-- PHOTO COLUMN -->
+    <div class="about-img-wrap fade-in">
+      <!--
+        CHANGE: Replace the placeholder div below with your actual photo using:
+          <img src="photo.jpg" alt="Your Name" style="width:100%; display:block;" />
+        Put your photo file (photo.jpg) in the same folder as index.html.
+        The image should ideally be portrait orientation (taller than wide).
+      -->
+      <!-- <div class="about-img-placeholder">
+        <div class="about-img-icon">◉</div>
+        <span>add your photo here</span>
+      </div> -->
+      <img src="kd.jpg" alt="KD" style="width:100%; display:block;" />
+    </div>
+
+    <!-- BIO COLUMN -->
+    <div class="about-text fade-in">
+
+      <!-- CHANGE: First paragraph — your main intro (shown larger) -->
+      <p>
+        Hi, I'm <strong>Your Name</strong> — an engineer and researcher passionate about
+        robotics, autonomous systems, and the places where software meets the physical world.
+      </p>
+
+      <!-- CHANGE: Second paragraph — current work / position -->
+      <p>
+        I'm currently working on [your current work or position]. My background spans
+        [your fields], with a focus on building things that are both technically rigorous
+        and genuinely useful.
+      </p>
+
+      <!-- CHANGE: Third paragraph — personal note / what you do outside work -->
+      <p>
+        When I'm not writing code or papers, you'll find me [your hobby or personal note].
+        I believe the best work comes from staying curious across disciplines.
+      </p>
+
+      <!-- CHANGE: Add or remove skill tags to match your actual skills -->
+      <div class="skills-row">
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">ROS</span>
+        <span class="skill-tag">Machine Learning</span>
+        <span class="skill-tag">C++</span>
+        <span class="skill-tag">Computer Vision</span>
+        <span class="skill-tag">Embedded Systems</span>
+        <span class="skill-tag">Research</span>
+        <span class="skill-tag">Writing</span>
+        <!-- Add more like: <span class="skill-tag">Docker</span> -->
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+  PROJECTS SECTION
+  CHANGE: Add your real projects — title, description, tags, link
+  To add a new project: copy one <div class="project-card">...</div>
+    block and paste it inside .projects-grid
+  To remove a project: delete the entire <div class="project-card"> block
+============================================================ -->
+<div id="projects">
+  <div class="inner">
+    <div class="section-label">Work</div>
+    <h2 class="section-heading">Selected <em>projects</em></h2>
+
+    <div class="projects-grid fade-in">
+
+      <!-- PROJECT 1 -->
+      <div class="project-card">
+        <div class="project-num">01</div>
+        <h3 class="project-title">Autonomous Robot Navigation</h3>  <!-- CHANGE: Project title -->
+        <p class="project-desc">
+          A full-stack navigation system for mobile robots using sensor fusion
+          and real-time path planning in dynamic environments.            <!-- CHANGE: Project description -->
+        </p>
+        <div class="project-tags">
+          <!-- CHANGE: Add/remove tech tags for this project -->
+          <span class="project-tag">ROS2</span>
+          <span class="project-tag">Python</span>
+          <span class="project-tag">SLAM</span>
+        </div>
+        <!-- CHANGE: Replace # with your GitHub link or live demo URL -->
+        <a href="#" class="project-link">View project →</a>
+      </div>
+
+      <!-- PROJECT 2 -->
+      <div class="project-card">
+        <div class="project-num">02</div>
+        <h3 class="project-title">CV Pipeline for Defect Detection</h3> <!-- CHANGE -->
+        <p class="project-desc">
+          Real-time computer vision pipeline achieving 97% accuracy in industrial
+          defect detection using custom-trained YOLO models.              <!-- CHANGE -->
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">PyTorch</span>     <!-- CHANGE -->
+          <span class="project-tag">OpenCV</span>
+          <span class="project-tag">YOLO</span>
+        </div>
+        <a href="#" class="project-link">View project →</a> <!-- CHANGE: link -->
+      </div>
+
+      <!-- PROJECT 3 -->
+      <div class="project-card">
+        <div class="project-num">03</div>
+        <h3 class="project-title">IoT Dashboard for Telemetry</h3>  <!-- CHANGE -->
+        <p class="project-desc">
+          Lightweight web dashboard for visualizing real-time telemetry data
+          from embedded devices over MQTT.                               <!-- CHANGE -->
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">React</span>        <!-- CHANGE -->
+          <span class="project-tag">MQTT</span>
+          <span class="project-tag">Node.js</span>
+        </div>
+        <a href="#" class="project-link">View project →</a> <!-- CHANGE: link -->
+      </div>
+
+      <!-- PROJECT 4 -->
+      <div class="project-card">
+        <div class="project-num">04</div>
+        <h3 class="project-title">Gesture Recognition Interface</h3> <!-- CHANGE -->
+        <p class="project-desc">
+          Hand gesture control system for operating robots without physical
+          controllers, using MediaPipe and custom classifiers.           <!-- CHANGE -->
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">MediaPipe</span>    <!-- CHANGE -->
+          <span class="project-tag">TensorFlow</span>
+          <span class="project-tag">C++</span>
+        </div>
+        <a href="#" class="project-link">View project →</a> <!-- CHANGE: link -->
+      </div>
+
+      <!-- PROJECT 5 -->
+      <div class="project-card">
+        <div class="project-num">05</div>
+        <h3 class="project-title">WiFi Robot Control Frontend</h3>  <!-- CHANGE -->
+        <p class="project-desc">
+          Mobile-first web interface for robot control accessible via QR code
+          over local WiFi. No app install required.                     <!-- CHANGE -->
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">HTML/CSS</span>     <!-- CHANGE -->
+          <span class="project-tag">WebSockets</span>
+          <span class="project-tag">Raspberry Pi</span>
+        </div>
+        <a href="#" class="project-link">View project →</a> <!-- CHANGE: link -->
+      </div>
+
+      <!-- PROJECT 6 -->
+      <div class="project-card">
+        <div class="project-num">06</div>
+        <h3 class="project-title">Open Source Contributions</h3>    <!-- CHANGE -->
+        <p class="project-desc">
+          Contributions to robotics open-source projects including navigation
+          libraries, simulation tools, and developer utilities.         <!-- CHANGE -->
+        </p>
+        <div class="project-tags">
+          <span class="project-tag">Open Source</span>  <!-- CHANGE -->
+          <span class="project-tag">GitHub</span>
+        </div>
+        <!-- CHANGE: Replace with your GitHub profile URL -->
+        <a href="https://github.com/yourusername" class="project-link">View on GitHub →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+  RESEARCH SECTION
+  CHANGE: Add your papers — year, title, venue/journal, status badge
+  Badge options:
+    - "Published"  (teal border)
+    - "Preprint"   (same style, just change the text)
+    - "In Review"  (same style, just change the text)
+  To add a paper: copy one <div class="research-item"> block
+  To remove: delete the whole block
+============================================================ -->
+<section id="research">
+  <div class="section-label">Academia</div>
+  <h2 class="section-heading">Research &amp; <em>publications</em></h2>
+
+  <div class="research-list">
+
+    <!-- PAPER 1 -->
+    <div class="research-item fade-in">
+      <div class="research-year">2024</div>  <!-- CHANGE: Publication year -->
+      <div>
+        <!-- CHANGE: Full paper title -->
+        <div class="research-title">Adaptive Path Planning for Mobile Robots in Dynamic Environments</div>
+        <!-- CHANGE: Conference or journal name -->
+        <div class="research-venue">International Conference on Robotics and Automation (ICRA)</div>
+        <!-- CHANGE: One sentence abstract or description -->
+        <div class="research-abstract">
+          We propose a novel adaptive planning framework that combines learned heuristics
+          with classical graph search to achieve real-time re-planning in dynamic environments.
+        </div>
+      </div>
+      <!-- CHANGE: Status — "Published", "Preprint", "In Review", "Under Submission" etc. -->
+      <div class="research-badge">Published</div>
+    </div>
+
+    <!-- PAPER 2 -->
+    <div class="research-item fade-in">
+      <div class="research-year">2023</div>  <!-- CHANGE -->
+      <div>
+        <div class="research-title">Lightweight Semantic Segmentation for Edge Robotics</div>  <!-- CHANGE -->
+        <div class="research-venue">IEEE Robotics and Automation Letters (RA-L)</div>           <!-- CHANGE -->
+        <div class="research-abstract">
+          A compressed semantic segmentation architecture designed for deployment on
+          resource-constrained embedded platforms with minimal accuracy loss.           <!-- CHANGE -->
+        </div>
+      </div>
+      <div class="research-badge">Published</div>  <!-- CHANGE -->
+    </div>
+
+    <!-- PAPER 3 -->
+    <div class="research-item fade-in">
+      <div class="research-year">2023</div>  <!-- CHANGE -->
+      <div>
+        <div class="research-title">Multi-Modal Sensor Fusion for Indoor Localization</div>  <!-- CHANGE -->
+        <div class="research-venue">arXiv preprint</div>                                      <!-- CHANGE -->
+        <div class="research-abstract">
+          Exploring the fusion of LiDAR, IMU, and visual odometry signals for robust
+          indoor localization without GPS dependencies.                               <!-- CHANGE -->
+        </div>
+      </div>
+      <div class="research-badge">Preprint</div>  <!-- CHANGE -->
+    </div>
+
+    <!-- PAPER 4 -->
+    <div class="research-item fade-in">
+      <div class="research-year">2022</div>  <!-- CHANGE -->
+      <div>
+        <div class="research-title">Survey of Sim-to-Real Transfer Techniques in Deep RL</div>  <!-- CHANGE -->
+        <div class="research-venue">Journal of Field Robotics</div>                              <!-- CHANGE -->
+        <div class="research-abstract">
+          A comprehensive survey of domain randomization and adaptation techniques for
+          transferring policies from simulation to real-world robotic systems.          <!-- CHANGE -->
+        </div>
+      </div>
+      <div class="research-badge">Published</div>  <!-- CHANGE -->
+    </div>
+
+    <!-- Add more papers by copying any block above -->
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+  HOBBIES SECTION
+  CHANGE: Replace with your actual hobbies — icon, name, description
+  Note: the first hobby card is wider (spans full row) — keep it for
+    your main/favourite hobby
+  To add a hobby: copy a <div class="hobby-card"> block
+  To remove: delete the entire block
+============================================================ -->
+<div id="hobbies">
+  <div class="inner">
+    <div class="section-label">Beyond work</div>
+    <h2 class="section-heading">Things I <em>love</em></h2>
+
+    <div class="hobbies-grid fade-in">
+
+      <!-- HOBBY 1 — wide card (spans full row) -->
+      <div class="hobby-card">
+        <span class="hobby-icon">📷</span>        <!-- CHANGE: emoji icon -->
+        <div class="hobby-name">Photography</div>  <!-- CHANGE: hobby name -->
+        <!-- CHANGE: A short, personal description of this hobby -->
+        <p class="hobby-desc">
+          I shoot street and landscape photography — drawn to the geometry of urban spaces
+          and the way light transforms ordinary scenes into something worth stopping for.
+        </p>
+      </div>
+
+      <!-- HOBBY 2 -->
+      <div class="hobby-card">
+        <span class="hobby-icon">📚</span>         <!-- CHANGE: emoji icon -->
+        <div class="hobby-name">Reading</div>       <!-- CHANGE: hobby name -->
+        <p class="hobby-desc">
+          Science fiction, philosophy of mind, history of technology. If a book makes me
+          rethink something I thought I understood, it goes on the permanent shelf.    <!-- CHANGE -->
+        </p>
+      </div>
+
+      <!-- HOBBY 3 -->
+      <div class="hobby-card">
+        <span class="hobby-icon">🎸</span>         <!-- CHANGE: emoji icon -->
+        <div class="hobby-name">Music</div>         <!-- CHANGE: hobby name -->
+        <p class="hobby-desc">
+          Playing guitar badly and listening to everything else seriously. Currently
+          obsessed with post-rock and South Indian classical.                        <!-- CHANGE -->
+        </p>
+      </div>
+
+      <!-- HOBBY 4 -->
+      <div class="hobby-card">
+        <span class="hobby-icon">🧗</span>          <!-- CHANGE: emoji icon -->
+        <div class="hobby-name">Rock Climbing</div> <!-- CHANGE: hobby name -->
+        <p class="hobby-desc">
+          Bouldering mostly. The problem-solving aspect of climbing maps surprisingly
+          well onto debugging — you just use your whole body.                        <!-- CHANGE -->
+        </p>
+      </div>
+
+      <!-- Add more hobbies by copying any block above -->
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+  BLOG SECTION
+  CHANGE: Replace with your real blog posts — date, title, excerpt, link
+  The first card is "featured" (taller, more prominent)
+  To add a post: copy a <a class="blog-card"> block
+  To remove: delete the entire block
+  To link to a real post: replace href="#" with the full URL
+============================================================ -->
+<section id="blog">
+  <div class="section-label">Writing</div>
+  <h2 class="section-heading">From the <em>blog</em></h2>
+
+  <div class="blog-grid fade-in">
+
+    <!-- FEATURED POST (tall card on the left) -->
+    <a href="#" class="blog-card featured">  <!-- CHANGE: href to your post URL -->
+      <div class="blog-date">March 2025</div>  <!-- CHANGE: date -->
+      <!-- CHANGE: Post title -->
+      <div class="blog-title">Why I stopped fighting ROS and started appreciating its philosophy</div>
+      <!-- CHANGE: Short excerpt (2–3 sentences) -->
+      <p class="blog-excerpt">
+        After years of frustration with ROS tooling, I finally understood that the
+        framework's verbosity isn't a bug — it's encoding decades of hard-won lessons
+        about distributed robotics systems.
+      </p>
+      <div class="blog-read">Read essay →</div>
+    </a>
+
+    <!-- BLOG POST 2 -->
+    <a href="#" class="blog-card">            <!-- CHANGE: href to your post URL -->
+      <div class="blog-date">January 2025</div>                       <!-- CHANGE -->
+      <div class="blog-title">Setting up a robot dev environment in 2025</div>  <!-- CHANGE -->
+      <p class="blog-excerpt">A practical guide to the tools and configurations I actually use.</p>  <!-- CHANGE -->
+      <div class="blog-read">Read →</div>
+    </a>
+
+    <!-- BLOG POST 3 -->
+    <a href="#" class="blog-card">            <!-- CHANGE: href to your post URL -->
+      <div class="blog-date">November 2024</div>                      <!-- CHANGE -->
+      <div class="blog-title">Notes on sim-to-real transfer</div>     <!-- CHANGE -->
+      <p class="blog-excerpt">What the research says and what actually works in practice.</p>  <!-- CHANGE -->
+      <div class="blog-read">Read →</div>
+    </a>
+
+    <!-- BLOG POST 4 -->
+    <a href="#" class="blog-card">            <!-- CHANGE: href to your post URL -->
+      <div class="blog-date">September 2024</div>                     <!-- CHANGE -->
+      <div class="blog-title">The underrated skill of reading papers</div>  <!-- CHANGE -->
+      <p class="blog-excerpt">How to read 10x faster without missing what matters.</p>  <!-- CHANGE -->
+      <div class="blog-read">Read →</div>
+    </a>
+
+    <!-- Add more posts by copying a <a class="blog-card"> block above -->
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+  CONTACT SECTION
+  CHANGE: Email address, GitHub/LinkedIn/Twitter URLs and handles
+============================================================ -->
+<div id="contact">
+  <div class="inner">
+    <div class="section-label">Get in touch</div>
+    <h2 class="section-heading">Let's <em>connect</em></h2>
+
+    <div class="contact-grid">
+
+      <!-- LEFT: intro text + social links -->
+      <div>
+        <!-- CHANGE: A short sentence about when/why to contact you -->
+        <p class="contact-intro">
+          Whether you want to collaborate on a project, discuss research, or just say
+          hello — I'm always happy to hear from interesting people.
+        </p>
+
+        <div class="contact-links">
+
+          <!-- CHANGE: Replace with your real email address in both href and the visible text -->
+          <a href="mailto:you@email.com" class="contact-link">
+            <div class="contact-link-icon">✉</div>
+            kuldeeplakhansosn@gmail.com
+          </a>
+
+          <!-- CHANGE: Replace "yourusername" with your real GitHub username -->
+          <a href="https://github.com/yourusername" target="_blank" class="contact-link">
+            <div class="contact-link-icon">⌥</div>
+            github.com/ShivXShakti
+          </a>
+
+          <!-- CHANGE: Replace "yourusername" with your real LinkedIn username -->
+          <a href="https://linkedin.com/in/yourusername" target="_blank" class="contact-link">
+            <div class="contact-link-icon">in</div>
+            linkedin.com/in/kuldeepgurjar
+          </a>
+
+          <!-- CHANGE: Replace "yourusername" with your real Twitter/X handle (or delete this block) -->
+          <a href="https://twitter.com/yourusername" target="_blank" class="contact-link">
+            <div class="contact-link-icon">𝕏</div>
+            @yourusername
+          </a>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: contact form -->
+      <!--
+        NOTE ON THE CONTACT FORM:
+        This form does NOT send emails on its own — HTML alone can't do that.
+        To make it work for free, sign up at https://formspree.io,
+        create a form, and replace the <form> tag with:
+          <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        That's it — Formspree handles delivery to your inbox, for free.
+      -->
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-field">
+          <label class="form-label" for="name">Name</label>
+          <input class="form-input" id="name" type="text" placeholder="Your name" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="email">Email</label>
+          <input class="form-input" id="email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="message">Message</label>
+          <textarea class="form-textarea" id="message" placeholder="What's on your mind?" required></textarea>
+        </div>
+        <button class="form-btn" type="submit">Send message →</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+  FOOTER
+  CHANGE: Your name and year
+============================================================ -->
+<footer>
+  <!-- CHANGE: Your real name and current year -->
+  <span class="footer-copy">© 2025 Your Name. Built with HTML, hosted on GitHub Pages.</span>
+  <a href="#hero" class="footer-back">↑ Back to top</a>
+</footer>
+
+
+<!-- ============================================================
+  JAVASCRIPT — no changes needed here
+  Handles: custom cursor, scroll fade-in animations, form feedback
+============================================================ -->
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .project-card, .hobby-card, .research-item').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  // Fade-in on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Contact form — shows success state (wire up Formspree for real emails)
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-btn');
+    btn.textContent = 'Sent ✓';
+    btn.style.borderColor = 'var(--accent3)';
+    btn.style.color = 'var(--accent3)';
+    setTimeout(() => {
+      btn.textContent = 'Send message →';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      e.target.reset();
+    }, 3000);
+  }
+</script>
+
+</body>
+</html>
