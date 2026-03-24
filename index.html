@@ -371,8 +371,9 @@
     .footer-back:hover { color: var(--accent); }
 
     /* ── SCROLL ANIMATION ───────────────────────────────────── */
-    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; animation: fadeUp 0.8s ease 0.2s forwards; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); animation: none; }
 
     /* ── RESPONSIVE ─────────────────────────────────────────── */
     @media (max-width: 900px) {
@@ -463,14 +464,15 @@
   <div class="hero-left" style="position:relative; z-index:1;">
 
     <!-- CHANGE: Small label shown above your name -->
-    <div class="hero-tag">Open to Research Collaboration</div>
+    <div class="hero-tag">Data Scientist · DRDO, Pune</div>
 
     <h1 class="hero-name">Kuldeep <em>Gurjar</em></h1>
 
-    <p class="hero-title">Robotics Engineer · AI Researcher · Data Scientist</p>
+    <p class="hero-title">Robotics · Reinforcement Learning · AI for Defence</p>
 
     <p class="hero-desc">
-      Building intelligent robotic systems at DRDO — from biped locomotion and dual-arm manipulation to LLM-guided autonomy. M.Tech in Automation & Robotics, IISc intern, and published researcher.
+      I build intelligent robotic systems — from biped locomotion and dual-arm manipulation
+      to LLM-driven autonomy. Currently at DRDO developing next-generation defence robots.
     </p>
 
     <a href="#about" class="hero-cta">Explore my work <span>→</span></a>
@@ -480,15 +482,15 @@
 
     <div class="hero-stat">
       <div class="hero-stat-num">4+</div>
-      <div class="hero-stat-label">Publications</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">5+</div>
       <div class="hero-stat-label">Years experience</div>
     </div>
     <div class="hero-stat">
+      <div class="hero-stat-num">4</div>
+      <div class="hero-stat-label">Papers published</div>
+    </div>
+    <div class="hero-stat">
       <div class="hero-stat-num">10+</div>
-      <div class="hero-stat-label">Robot platforms</div>
+      <div class="hero-stat-label">Projects completed</div>
     </div>
 
   </div>
@@ -551,36 +553,41 @@
     <!-- RIGHT: Bio text ─────────────────────────────────────── -->
     <div class="about-text fade-in">
 
-      <!-- CHANGE: Opening line — introduces you (displayed larger) -->
       <p>
-        Hi, I'm <strong>Kuldeep Gurjar</strong> — a robotics engineer and AI researcher working at the Defence Research &amp; Development Organisation (DRDO), Pune, with a focus on intelligent robotic systems that operate in real-world, safety-critical environments.
+        Hi, I'm <strong>Kuldeep Gurjar</strong> — a robotics engineer and AI researcher specialising
+        in reinforcement learning, motion planning, and intelligent autonomous systems.
       </p>
 
       <p>
-        Currently serving as Data Scientist (RDE Eng.) at DRDO, I work on upper-body dual-arm robotic systems, biped locomotion, reinforcement learning, and the integration of LLMs &amp; VLMs for robotic control. I hold an M.Tech in Automation and Robotics from DIAT, Pune, and have research experience from the Robert Bosch Centre for Cyber-Physical Systems at IISc Bangalore.
+        I'm currently a Data Scientist (RDE Engineer) at the Defence Research &amp; Development
+        Organisation (DRDO), Pune, where I work on biped locomotion, dual-arm manipulation,
+        and LLM/VLM integration for defence robots. Before this I was a Senior Research Fellow
+        at DIAT, and a Research Intern at IISc Bangalore's Robert Bosch Centre for Cyber-Physical Systems.
       </p>
 
       <p>
-        My work spans the full stack — from formal methods and signal temporal logic to hardware deployment on Nvidia Jetson AGX Orin, UR10 manipulators, and DRDO's BRS1 biped. I've competed in national kart racing championships and believe the best engineering is equal parts rigour and creativity.
+        My work spans the full stack — from formal methods like Signal Temporal Logic to hands-on
+        hardware deployment on platforms like the Nvidia Jetson AGX Orin, UR10 manipulator, and DRDO's
+        BRS1 biped. I hold an M.Tech in Automation &amp; Robotics from DIAT, Pune.
       </p>
 
       <div class="skills-row">
         <span class="skill-tag">ROS1 &amp; ROS2</span>
         <span class="skill-tag">Python</span>
         <span class="skill-tag">C++</span>
-        <span class="skill-tag">PyTorch</span>
-        <span class="skill-tag">TensorFlow</span>
         <span class="skill-tag">Reinforcement Learning</span>
         <span class="skill-tag">Deep Learning</span>
+        <span class="skill-tag">PyTorch</span>
+        <span class="skill-tag">TensorFlow</span>
         <span class="skill-tag">Computer Vision</span>
         <span class="skill-tag">LLM &amp; VLM</span>
-        <span class="skill-tag">Gazebo / MuJoCo / Isaac Sim</span>
-        <span class="skill-tag">Signal Temporal Logic</span>
+        <span class="skill-tag">Gazebo / MuJoCo</span>
+        <span class="skill-tag">Isaac Sim</span>
         <span class="skill-tag">Path Planning</span>
-        <span class="skill-tag">SLAM</span>
-        <span class="skill-tag">EEG / Radar (FMCW)</span>
-        <span class="skill-tag">Nvidia Jetson AGX Orin</span>
+        <span class="skill-tag">Signal Temporal Logic</span>
         <span class="skill-tag">MatLab</span>
+        <span class="skill-tag">FMCW Radar</span>
+        <span class="skill-tag">EEG</span>
       </div>
 
     </div>
@@ -603,101 +610,106 @@
     <h2 class="section-heading">Selected <em>projects</em></h2>
     <div class="projects-grid fade-in">
 
-      <!-- PROJECT 1 -->
+      <!-- PROJECT 1 ──────────────────────────────────────────── -->
       <div class="project-card">
         <div class="project-num">01</div>
-        <h3 class="project-title">Biped Robot Locomotion & Control</h3>
+        <h3 class="project-title">Biped Robot Locomotion (BRS1 · DRDO)</h3>
         <p class="project-desc">
-          Controller implementation for stable walking of the DRDO BRS1 biped, including reinforcement learning for locomotion and full software stack development.
+          Controller design and reinforcement learning for stable walking of DRDO's BRS1 biped.
+          Includes full software stack development and LLM/VLM-based task understanding.
         </p>
         <div class="project-tags">
-          <span class="project-tag">Reinforcement Learning</span>
+          <span class="project-tag">RL (PPO/TD3)</span>
           <span class="project-tag">ROS2</span>
-          <span class="project-tag">Python</span>
-          <span class="project-tag">C++</span>
+          <span class="project-tag">LLM/VLM</span>
+          <span class="project-tag">Isaac Sim</span>
         </div>
-        <a href="#" class="project-link">DRDO — Ongoing →</a>
+        <a href="#" class="project-link">View project →</a>
       </div>
 
-      <!-- PROJECT 2 -->
+      <!-- PROJECT 2 ──────────────────────────────────────────── -->
       <div class="project-card">
         <div class="project-num">02</div>
-        <h3 class="project-title">Dual-Arm Robotic System</h3>
+        <h3 class="project-title">Dual-Arm Motion Planning (UR10 · DRDO)</h3>
         <p class="project-desc">
-          Upper-body dual-arm motion planning with admittance control for DRDO's robotic platform, integrating LLM & VLM for task-level reasoning and manipulation.
+          Dual-arm upper body robotic system with admittance control for compliant interaction.
+          Deployed on DRDO's upper body platform using the UR10 manipulator.
         </p>
         <div class="project-tags">
-          <span class="project-tag">Motion Planning</span>
-          <span class="project-tag">LLM / VLM</span>
+          <span class="project-tag">MoveIt</span>
           <span class="project-tag">Admittance Control</span>
-          <span class="project-tag">UR10</span>
+          <span class="project-tag">ROS2</span>
+          <span class="project-tag">C++</span>
         </div>
-        <a href="#" class="project-link">DRDO — Ongoing →</a>
+        <a href="#" class="project-link">View project →</a>
       </div>
 
-      <!-- PROJECT 3 -->
+      <!-- PROJECT 3 ──────────────────────────────────────────── -->
       <div class="project-card">
         <div class="project-num">03</div>
-        <h3 class="project-title">RL with Signal Temporal Logic</h3>
+        <h3 class="project-title">RL with Signal Temporal Logic (IISc · Bosch)</h3>
         <p class="project-desc">
-          Reward shaping for reinforcement learning using funnel-based control and Signal Temporal Logic. Proposed the time-aware TD3PG algorithm for time-sensitive robot tasks.
+          Reward shaping for RL using funnel-based control when tasks are specified by STL.
+          Proposed the time-aware TD3PG algorithm to handle time-sensitive robot states.
         </p>
         <div class="project-tags">
-          <span class="project-tag">RL / TD3PG</span>
-          <span class="project-tag">Signal Temporal Logic</span>
-          <span class="project-tag">Formal Methods</span>
+          <span class="project-tag">TD3PG</span>
+          <span class="project-tag">STL</span>
+          <span class="project-tag">Funnel Control</span>
           <span class="project-tag">Python</span>
         </div>
-        <a href="#" class="project-link">IISc — Robert Bosch Centre →</a>
+        <a href="#" class="project-link">View project →</a>
       </div>
 
-      <!-- PROJECT 4 -->
+      <!-- PROJECT 4 ──────────────────────────────────────────── -->
       <div class="project-card">
         <div class="project-num">04</div>
         <h3 class="project-title">EEG-Based Brain-Robot Interface</h3>
         <p class="project-desc">
-          Novel classification of upper-limb motor imagery tasks from EEG signals using ratio of band power (RBP) features — nominated best paper at ICARM 2024, Tokyo.
+          Classifying upper-limb motor imagery tasks from EEG signals using ratio of band
+          power features. Nominated for best paper at ICARM 2024, Tokyo.
         </p>
         <div class="project-tags">
           <span class="project-tag">EEG</span>
-          <span class="project-tag">Machine Learning</span>
+          <span class="project-tag">Signal Processing</span>
           <span class="project-tag">Scikit-Learn</span>
           <span class="project-tag">Python</span>
         </div>
         <a href="https://doi.org/10.1109/ICARM62033.2024.10715808" class="project-link">View paper →</a>
       </div>
 
-      <!-- PROJECT 5 -->
+      <!-- PROJECT 5 ──────────────────────────────────────────── -->
       <div class="project-card">
         <div class="project-num">05</div>
-        <h3 class="project-title">Drone State Identification via RF</h3>
+        <h3 class="project-title">Drone State Identification via RF Signal</h3>
         <p class="project-desc">
-          Wavelet transform-based system for identifying drone flight states (hovering, recording, flying) from radio-frequency signals with Random Forest classification.
+          Wavelet-transform-based system to detect and classify drone states (hovering, flying,
+          recording) from RF signals across sky and hilly backgrounds using Random Forest.
         </p>
         <div class="project-tags">
           <span class="project-tag">Wavelet Transform</span>
           <span class="project-tag">Random Forest</span>
-          <span class="project-tag">Radar / RF</span>
+          <span class="project-tag">RF Signal</span>
           <span class="project-tag">Python</span>
         </div>
         <a href="https://doi.org/10.2514/1.I011389" class="project-link">View paper →</a>
       </div>
 
-      <!-- PROJECT 6 -->
+      <!-- PROJECT 6 ──────────────────────────────────────────── -->
       <div class="project-card">
         <div class="project-num">06</div>
-        <h3 class="project-title">Path Planning & Mobile Robotics</h3>
+        <h3 class="project-title">Autonomous Mobile Robot (ROS · Gazebo)</h3>
         <p class="project-desc">
-          Implemented Dijkstra, A*, and RRT path planning; RGB-D SLAM with Kinect; MPC for quadcopter trajectory tracking; and ROS-based semi-autonomous mobile robot.
+          Differential-drive mobile robot with SLAM, path planning (Dijkstra, A*, RRT),
+          MPC control, and RGB-D mapping using Turtlebot3 and Kinect camera.
         </p>
         <div class="project-tags">
           <span class="project-tag">ROS</span>
           <span class="project-tag">Gazebo</span>
           <span class="project-tag">SLAM</span>
           <span class="project-tag">MPC</span>
-          <span class="project-tag">Turtlebot3</span>
         </div>
-        <a href="#" class="project-link">Course projects →</a>
+        <a href="#" class="project-link">View project →</a>
       </div>
 
     </div>
@@ -721,53 +733,57 @@
   <h2 class="section-heading">Research &amp; <em>publications</em></h2>
   <div class="research-list">
 
-    <!-- PAPER 1 -->
+    <!-- PAPER 1 ─────────────────────────────────────────────── -->
     <div class="research-item fade-in">
       <div class="research-year">2024</div>
       <div>
         <div class="research-title">Classifying EEG-based Upper Limb Motor Imagery Tasks for Brain-Robot Interface-based System Development</div>
-        <div class="research-venue">ICARM 2024 — International Conference on Advanced Robotics and Mechatronics, Tokyo, Japan</div>
+        <div class="research-venue">ICARM 2024 · International Conference on Advanced Robotics and Mechatronics, Tokyo, Japan</div>
         <div class="research-abstract">
-          Ratio of band power (RBP) features from EEG signals are proposed to classify distinct upper-limb motor imagery tasks, enabling brain-driven robotic control. Nominated for best conference paper.
+          Novel ratio of band power (RBP) features for classifying upper-limb motor imagery tasks from EEG,
+          enabling reliable brain-robot interface control. Nominated for best conference paper.
         </div>
       </div>
-      <div class="research-badge">Best Paper Nominee</div>
+      <div class="research-badge">Best Paper Nom.</div>
     </div>
 
-    <!-- PAPER 2 -->
+    <!-- PAPER 2 ─────────────────────────────────────────────── -->
     <div class="research-item fade-in">
       <div class="research-year">2024</div>
       <div>
         <div class="research-title">ResNet50-based Automated Method for Monocular Depth Estimation using Video</div>
-        <div class="research-venue">IEEE CONECCT 2024 — International Conference on Electronics, Computing and Communication Technologies, Bangalore</div>
+        <div class="research-venue">IEEE CONECCT 2024 · Electronics, Computing and Communication Technologies, Bangalore</div>
         <div class="research-abstract">
-          A ResNet50-based pipeline for monocular depth estimation from video, enabling depth perception on single-camera robotic platforms without stereo hardware.
+          A ResNet50-based pipeline for monocular depth estimation from video, providing accurate
+          scene depth without stereo hardware.
         </div>
       </div>
       <div class="research-badge">Published</div>
     </div>
 
-    <!-- PAPER 3 -->
+    <!-- PAPER 3 ─────────────────────────────────────────────── -->
     <div class="research-item fade-in">
       <div class="research-year">2024</div>
       <div>
         <div class="research-title">Advanced Wavelet Transform-Based Automated System for Drone State Identification Using Radio-Frequency Signal</div>
-        <div class="research-venue">Journal of Aerospace Information Systems (JAIS), Vol. 21, No. 11, 2024</div>
+        <div class="research-venue">Journal of Aerospace Information Systems (JAIS), Vol. 21, No. 11</div>
         <div class="research-abstract">
-          An automated system using wavelet transforms and Random Forest classifiers to detect and identify drone states (hovering, flying, recording) from RF signals across different backgrounds.
+          Wavelet-based classification of drone operational states (connected, hovering, flying, recording)
+          from RF signals across diverse backgrounds using a Random Forest classifier.
         </div>
       </div>
       <div class="research-badge">Published</div>
     </div>
 
-    <!-- PAPER 4 -->
+    <!-- PAPER 4 ─────────────────────────────────────────────── -->
     <div class="research-item fade-in">
       <div class="research-year">2024</div>
       <div>
         <div class="research-title">Non-Invasive Age and Gender Classification of Children Using Radar-Based Vital Sign Analysis</div>
         <div class="research-venue">Internet of Things and Cyber-Physical Systems (Under Review)</div>
         <div class="research-abstract">
-          IWR FMCW radar vital sign data is used with machine learning to non-invasively classify age and gender of children — a novel application of radar sensing in pediatric monitoring.
+          IWR radar-based vital sign data is used with machine learning to non-invasively classify
+          age and gender of children, enabling contact-free paediatric monitoring.
         </div>
       </div>
       <div class="research-badge">In Review</div>
@@ -794,39 +810,47 @@
     <h2 class="section-heading">Things I <em>love</em></h2>
     <div class="hobbies-grid fade-in">
 
-      <!-- HOBBY 1 — full-width card -->
+      <!-- HOBBY 1 — full-width card ──────────────────────────── -->
+      <div class="hobby-card">
+        <span class="hobby-icon">🏎️</span>
+        <div class="hobby-name">Go-Kart Racing &amp; Engineering</div>
+        <p class="hobby-desc">
+          Competed in national and international go-kart championships — building both IC-engine
+          and electric karts from scratch with Team Scavengers and Team Advait at MITS Gwalior.
+          Won the best presentation award at the e-NKRC. Racing taught me that engineering
+          under pressure is where theory meets reality.
+        </p>
+      </div>
+
+      <!-- HOBBY 2 ────────────────────────────────────────────── -->
       <div class="hobby-card">
         <span class="hobby-icon">🤖</span>
-        <div class="hobby-name">Competitive Robotics</div>
+        <div class="hobby-name">Robotics Teaching</div>
         <p class="hobby-desc">
-          From designing IC-engine and electric go-karts for national and international championships to working hands-on with biped robots and manipulators — I've always believed the best way to learn engineering is to build something that has to survive the real world. Racing taught me that failure is just the last test before the one that works.
+          Delivered hands-on ROS2 tutorials at DIAT's School of Robotics for postgraduate students,
+          covering robot dynamics, kinematics, and Turtlebot3 hardware sessions.
         </p>
       </div>
 
-      <!-- HOBBY 2 -->
+      <!-- HOBBY 3 ────────────────────────────────────────────── -->
       <div class="hobby-card">
-        <span class="hobby-icon">📡</span>
-        <div class="hobby-name">Signal Processing & RF</div>
+        <span class="hobby-icon">📖</span>
+        <div class="hobby-name">Reading &amp; Research</div>
         <p class="hobby-desc">
-          Fascinated by the information hidden in radar and EEG signals. Whether it's FMCW radar for vital sign detection or brainwave classification for robot control, there's something deeply satisfying about extracting meaning from noise.
+          Deep-diving into papers on RL, formal methods, and neuroscience.
+          I believe the boundary between robotics and biology is where the most
+          interesting problems live.
         </p>
       </div>
 
-      <!-- HOBBY 3 -->
+      <!-- HOBBY 4 ────────────────────────────────────────────── -->
       <div class="hobby-card">
-        <span class="hobby-icon">📚</span>
-        <div class="hobby-name">Teaching & Mentoring</div>
+        <span class="hobby-icon">🔬</span>
+        <div class="hobby-name">Electronics &amp; Embedded Systems</div>
         <p class="hobby-desc">
-          Delivered hands-on ROS tutorials for postgraduate students at DIAT. Teaching forces you to truly understand what you know — and to spot the gaps you didn't know you had.
-        </p>
-      </div>
-
-      <!-- HOBBY 4 -->
-      <div class="hobby-card">
-        <span class="hobby-icon">🧠</span>
-        <div class="hobby-name">AI & Formal Methods</div>
-        <p class="hobby-desc">
-          Spending free time exploring the intersection of formal verification and learning — using temporal logic to give robots provably correct behaviour, not just statistically likely behaviour.
+          Tinkering with Raspberry Pi, Arduino, and Jetson platforms.
+          From PLC training in Pune to embedded C — hardware hacking keeps
+          my software thinking grounded.
         </p>
       </div>
 
@@ -857,29 +881,31 @@
       <div class="blog-date">2024</div>
       <div class="blog-title">Why I stopped fighting ROS and started appreciating its philosophy</div>
       <p class="blog-excerpt">
-        After years of working with ROS1 and ROS2 across mobile robots, manipulators, and bipeds, I've come to see the framework's verbosity not as friction but as encoded wisdom about distributed robotic systems.
+        After years of working in ROS1 and ROS2 across mobile robots, manipulators, and bipeds,
+        I finally understood that the framework's verbosity isn't friction — it's encoding decades
+        of hard-won lessons about distributed robotics systems.
       </p>
       <div class="blog-read">Read essay →</div>
     </a>
 
     <a href="#" class="blog-card">
       <div class="blog-date">2024</div>
-      <div class="blog-title">Reward shaping with Signal Temporal Logic</div>
-      <p class="blog-excerpt">How funnel-based control and STL can give reinforcement learning agents formally verifiable behaviour.</p>
-      <div class="blog-read">Read →</div>
-    </a>
-
-    <a href="#" class="blog-card">
-      <div class="blog-date">2024</div>
-      <div class="blog-title">Notes on deploying LLMs on robots</div>
-      <p class="blog-excerpt">What actually works — and what doesn't — when using large language models for task-level robot control.</p>
+      <div class="blog-title">Sim-to-real with bipeds: what actually breaks</div>
+      <p class="blog-excerpt">A practical account of the gap between Isaac Sim and DRDO's BRS1 hardware.</p>
       <div class="blog-read">Read →</div>
     </a>
 
     <a href="#" class="blog-card">
       <div class="blog-date">2023</div>
-      <div class="blog-title">EEG for robotics: a practical intro</div>
-      <p class="blog-excerpt">Getting started with brain-computer interfaces for robot control, from signal acquisition to classification.</p>
+      <div class="blog-title">Signal Temporal Logic as a reward shaping tool</div>
+      <p class="blog-excerpt">How formal task specifications can improve RL policy robustness.</p>
+      <div class="blog-read">Read →</div>
+    </a>
+
+    <a href="#" class="blog-card">
+      <div class="blog-date">2023</div>
+      <div class="blog-title">Reading EEG signals for robot control</div>
+      <p class="blog-excerpt">Band power features, motor imagery tasks, and what the neuroscience actually says.</p>
       <div class="blog-read">Read →</div>
     </a>
 
@@ -915,28 +941,30 @@
       <!-- LEFT: Intro + social links ──────────────────────── -->
       <div>
         <p class="contact-intro">
-          Whether you want to collaborate on robotics research, discuss reinforcement learning or formal methods, or explore opportunities at the intersection of AI and real-world robotic systems — I'm always happy to connect.
+          Whether you want to collaborate on robotics research, discuss reinforcement learning,
+          or explore opportunities at the intersection of AI and defence systems — I'm always
+          happy to connect with curious people.
         </p>
         <div class="contact-links">
 
-          <a href="mailto:kuldeeplakhansons@gmail.com" class="contact-link">
+          <a href="/cdn-cgi/l/email-protection#117a647d757474617d707a79707f627e7f6251767c70787d3f727e7c" class="contact-link">
             <div class="contact-link-icon">✉</div>
-            kuldeeplakhansons@gmail.com
+            <span class="__cf_email__" data-cfemail="e9829c858d8c8c998588828188879a86879aa98e84888085c78a8684">[email&#160;protected]</span>
           </a>
 
           <a href="https://scholar.google.com" target="_blank" class="contact-link">
-            <div class="contact-link-icon">Gs</div>
+            <div class="contact-link-icon">G</div>
             Google Scholar Profile
           </a>
 
-          <a href="https://github.com/" target="_blank" class="contact-link">
+          <a href="https://github.com/kuldeepgurjar" target="_blank" class="contact-link">
             <div class="contact-link-icon">⌥</div>
-            github.com/kuldeep-gurjar
+            github.com/kuldeepgurjar
           </a>
 
-          <a href="https://linkedin.com/in/" target="_blank" class="contact-link">
+          <a href="https://linkedin.com/in/kuldeepgurjar" target="_blank" class="contact-link">
             <div class="contact-link-icon">in</div>
-            linkedin.com/in/kuldeep-gurjar
+            linkedin.com/in/kuldeepgurjar
           </a>
 
         </div>
@@ -980,7 +1008,7 @@
   JAVASCRIPT — generally no changes needed.
   Only change: if you switch to Formspree, delete handleSubmit().
 ============================================================ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Custom cursor tracking
   const cursor = document.getElementById('cursor');
   document.addEventListener('mousemove', e => {
@@ -998,11 +1026,4 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-  // Contact form — shows a visual success state only (no email sent by default).
-  // DELETE this entire function if you switch to Formspree.
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = e.target.querySelector('.form-btn');
-    btn.textContent = 'Sent ✓';
-    btn.style.borderColor = 'var(--accent3)';
-    btn
+  // Contact form — shows a visual success state only (no email sent by defau
