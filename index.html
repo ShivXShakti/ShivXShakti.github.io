@@ -51,23 +51,8 @@
       font-family: var(--serif);
       font-size: 18px;
       line-height: 1.7;
-      cursor: none;
       overflow-x: hidden;
     }
-
-    /* Custom cursor dot */
-    #cursor {
-      position: fixed;
-      width: 8px; height: 8px;
-      background: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: width .2s, height .2s;
-      mix-blend-mode: difference;
-    }
-    #cursor.big { width: 40px; height: 40px; opacity: .3; }
 
     /* Subtle film-grain noise overlay */
     body::before {
@@ -134,7 +119,7 @@
       align-items: center; padding: 0 3rem; gap: 4rem;
       position: relative; overflow: hidden;
 
-      background-image: url('your-background.jpg');  /* CHANGE: your image filename here */
+      background-image: url('kd.jpg');  /* CHANGE: your image filename here */
       background-size: cover;
       background-position: center center;            /* CHANGE: reposition if needed */
       background-repeat: no-repeat;
@@ -401,8 +386,7 @@
 </head>
 <body>
 
-<!-- Custom cursor dot — no changes needed -->
-<div id="cursor"></div>
+
 
 
 <!-- ============================================================
@@ -543,10 +527,11 @@
           - Supported formats: .jpg  .jpeg  .png  .webp
         ────────────────────────────────────────────────────
       -->
-      <div class="about-img-placeholder">
-        <div class="about-img-icon">◉</div>
-        <span>add your photo here</span>
-      </div>
+      <img
+              src="kd.jpg"
+              alt="Your Name"
+              style="width:100%; aspect-ratio:3/4; object-fit:cover; display:block;"
+            />
 
     </div>
 
@@ -1009,16 +994,15 @@
   Only change: if you switch to Formspree, delete handleSubmit().
 ============================================================ -->
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  // Custom cursor tracking
-  const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-  });
-  document.querySelectorAll('a, button, .project-card, .hobby-card, .research-item').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-  });
+
+  // Smooth ring follow with lerp
+  (function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top  = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  })();
 
   // Scroll-triggered fade-in animations
   const observer = new IntersectionObserver(entries => {
