@@ -3,1011 +3,707 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ============================================================
-    CHANGE: Update this to your real name.
-    This text appears in the browser tab.
-  ============================================================ -->
   <title>Kuldeep Gurjar — Robotics & AI Researcher</title>
 
-  <!-- Google Fonts — no changes needed -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
-
-    /* ============================================================
-      CHANGE: Global color theme.
-      Edit these variables to restyle the whole site instantly.
-        --accent  = gold highlight (headings, links, buttons)
-        --accent2 = warm orange (project card hover lines)
-        --accent3 = teal (research badges, form success)
-        --bg      = main dark background
-        --ink     = primary text color
-    ============================================================ */
     :root {
-      --bg:      #0d0d0d;
-      --bg2:     #141414;
-      --bg3:     #1a1a1a;
-      --ink:     #f0ece4;
-      --ink2:    #9e9a93;
-      --ink3:    #5c5a56;
-      --accent:  #e8c97a;
-      --accent2: #c46a3a;
-      --accent3: #7ab8a8;
-      --serif:   'Cormorant Garamond', Georgia, serif;
-      --sans:    'Syne', sans-serif;
-      --mono:    'DM Mono', monospace;
-      --max:     1100px;
+      --bg-deep:     #060810;
+      --bg-mid:      #0b0e18;
+      --bg-surface:  #111520;
+      --bg-card:     #161b28;
+      --ink:         #e8eaf0;
+      --ink-dim:     #8b90a0;
+      --ink-ghost:   #2a2f42;
+      --gold:        #f0c060;
+      --gold-dim:    #a07830;
+      --cyan:        #40c8c0;
+      --cyan-dim:    #204844;
+      --red-dim:     #c04858;
+      --font-display:'Playfair Display', Georgia, serif;
+      --font-ui:     'Space Grotesk', sans-serif;
+      --font-mono:   'JetBrains Mono', monospace;
+      --max:         1140px;
+      --radius:      2px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; font-size: 16px; }
 
     body {
-      background: var(--bg);
+      background: var(--bg-deep);
       color: var(--ink);
-      font-family: var(--serif);
-      font-size: 18px;
+      font-family: var(--font-ui);
+      font-size: 1rem;
       line-height: 1.7;
       overflow-x: hidden;
     }
 
-    /* Subtle film-grain noise overlay */
-    body::before {
+    body::after {
       content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      position: fixed; inset: 0; z-index: 9999;
       pointer-events: none;
-      z-index: 9998;
-      opacity: .35;
+      background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+      opacity: .6;
     }
 
-    /* ── NAVIGATION ─────────────────────────────────────────── */
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 2.5rem; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: .6rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .section-label::before {
+      content: '';
+      width: 28px; height: 1px;
+      background: var(--gold);
+      opacity: .7;
+    }
+
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 3.5rem;
+      letter-spacing: -.01em;
+    }
+    .section-heading em { font-style: italic; color: var(--gold); }
+
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 1.25rem 2.5rem;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 1.5rem 3rem;
-      background: linear-gradient(to bottom, rgba(13,13,13,.95), transparent);
+      background: linear-gradient(to bottom, rgba(6,8,16,.96) 0%, transparent 100%);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid rgba(240,192,96,.06);
     }
+
     .nav-logo {
-      font-family: var(--sans); font-weight: 800; font-size: 1rem;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--accent); text-decoration: none;
+      font-family: var(--font-mono); font-size: .85rem; font-weight: 500;
+      letter-spacing: .2em; color: var(--gold); text-decoration: none;
+      border: 1px solid var(--gold-dim); padding: .35rem .7rem; transition: border-color .25s, color .25s;
     }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-logo:hover { border-color: var(--gold); }
+
+    .nav-links { display: flex; gap: 2.25rem; list-style: none; }
     .nav-links a {
-      font-family: var(--mono); font-size: .72rem; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--ink2); text-decoration: none;
+      font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-dim); text-decoration: none;
       transition: color .2s; position: relative;
     }
-    .nav-links a::after {
-      content: ''; position: absolute; bottom: -2px; left: 0;
-      width: 0; height: 1px; background: var(--accent); transition: width .3s;
-    }
     .nav-links a:hover { color: var(--ink); }
-    .nav-links a:hover::after { width: 100%; }
 
-    /* ── HERO ───────────────────────────────────────────────── */
-
-    /* ============================================================
-      CHANGE: Hero background image.
-
-      HOW TO ADD YOUR BACKGROUND IMAGE:
-        1. Copy your image file into the SAME FOLDER as index.html
-           (e.g. background.jpg, hero.png, lab-photo.webp)
-        2. Replace 'your-background.jpg' on the line below
-           with your actual filename
-        3. Adjust background-position to frame the image:
-              "center center"  shows the middle (default)
-              "center top"     shows the top of the image
-              "center bottom"  shows the bottom
-              "80% center"     shifts focus to the right
-        4. Remove the background-attachment line to disable parallax
-
-      TIPS:
-        - Use a wide landscape image (1920x1080 or larger)
-        - Keep file size under 500KB (compress free at squoosh.app)
-        - Supported formats: .jpg  .jpeg  .png  .webp
-        - The dark overlay in the HTML below keeps text readable;
-          adjust the opacity values (0.85 / 0.50) there if needed
-    ============================================================ */
     #hero {
-      min-height: 100vh;
-      display: grid; grid-template-columns: 1fr 1fr;
-      align-items: center; padding: 0 3rem; gap: 4rem;
-      position: relative; overflow: hidden;
-
-      background-image: url('kd.jpg');  /* CHANGE: your image filename here */
-      background-size: cover;
-      background-position: center center;            /* CHANGE: reposition if needed */
-      background-repeat: no-repeat;
-      background-attachment: fixed;                  /* Parallax — remove this line to disable */
+      position: relative; min-height: 100vh; display: grid;
+      grid-template-columns: 1fr 1fr; align-items: center; overflow: hidden; background: var(--bg-deep);
     }
 
-    .hero-bg-line {
-      position: absolute; top: 0; bottom: 0; left: 50%;
-      width: 1px;
-      background: linear-gradient(to bottom, transparent, var(--ink3) 30%, var(--ink3) 70%, transparent);
-      opacity: .3;
+    .hero-divider {
+      position: absolute; left: 50%; top: 10%; bottom: 10%; width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--ink-ghost) 30%, var(--ink-ghost) 70%, transparent);
     }
-    .hero-left { padding-top: 6rem; }
+
+    .hero-grid-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(240,192,96,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(240,192,96,.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-left { padding: 8rem 3rem 4rem 2.5rem; position: relative; z-index: 2; }
+
     .hero-tag {
-      font-family: var(--mono); font-size: .72rem; letter-spacing: .18em;
-      text-transform: uppercase; color: var(--accent);
-      margin-bottom: 1.5rem; display: flex; align-items: center; gap: .75rem;
+      font-family: var(--font-mono); font-size: .65rem; letter-spacing: .22em;
+      text-transform: uppercase; color: var(--cyan); margin-bottom: 1.5rem;
+      display: inline-flex; align-items: center; gap: .6rem;
     }
-    .hero-tag::before { content: ''; width: 32px; height: 1px; background: var(--accent); }
-    .hero-name {
-      font-family: var(--serif);
-      font-size: clamp(3.5rem, 7vw, 6rem);
-      font-weight: 300; line-height: 1.05; letter-spacing: -.02em; margin-bottom: .25rem;
+    .hero-tag::before {
+      content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--cyan);
+      animation: pulse 2s ease-in-out infinite;
     }
-    .hero-name em { font-style: italic; color: var(--accent); }
-    .hero-title {
-      font-family: var(--sans); font-size: .85rem; font-weight: 400;
-      letter-spacing: .2em; text-transform: uppercase; color: var(--ink2); margin-bottom: 2rem;
-    }
-    .hero-desc { font-size: 1.1rem; color: var(--ink2); max-width: 420px; line-height: 1.8; margin-bottom: 2.5rem; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.7); } }
+
+    .hero-name { font-family: var(--font-display); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 400; line-height: 1.02; letter-spacing: -.02em; margin-bottom: .5rem; }
+    .hero-name em { font-style: italic; color: var(--gold); }
+
+    .hero-role { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 2rem; border-left: 2px solid var(--gold-dim); padding-left: .9rem; }
+    .hero-desc { font-size: 1.05rem; color: var(--ink-dim); max-width: 400px; line-height: 1.85; margin-bottom: 2.5rem; }
+
     .hero-cta {
-      display: inline-flex; align-items: center; gap: .75rem;
-      font-family: var(--mono); font-size: .75rem; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--bg); background: var(--accent);
-      padding: .85rem 2rem; text-decoration: none; transition: background .2s, gap .3s;
+      display: inline-flex; align-items: center; gap: .75rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em;
+      text-transform: uppercase; background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: .85rem 1.75rem;
+      text-decoration: none; transition: background .25s, color .25s, gap .3s;
     }
-    .hero-cta:hover { background: var(--ink); gap: 1.25rem; }
-    .hero-right { display: flex; flex-direction: column; gap: 2rem; padding-top: 6rem; align-items: flex-end; }
-    .hero-stat { text-align: right; border-right: 1px solid var(--ink3); padding-right: 1.5rem; }
-    .hero-stat-num { font-family: var(--serif); font-size: 3.5rem; font-weight: 300; color: var(--accent); line-height: 1; }
-    .hero-stat-label { font-family: var(--mono); font-size: .68rem; letter-spacing: .15em; text-transform: uppercase; color: var(--ink3); }
-    .hero-scroll {
-      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: .5rem;
-      font-family: var(--mono); font-size: .65rem; letter-spacing: .15em;
-      text-transform: uppercase; color: var(--ink3);
+    .hero-cta:hover { background: var(--gold); color: var(--bg-deep); gap: 1.2rem; }
+
+    .hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--ink-ghost); }
+    .stat-num { font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: .2rem; }
+    .stat-label { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-ghost); }
+
+    .hero-canvas-wrap { position: relative; z-index: 1; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #robot-canvas { width: 100%; height: 100%; display: block; }
+
+    .scene-legend { position: absolute; bottom: 2.5rem; right: 2.5rem; display: flex; flex-direction: column; gap: .4rem; z-index: 5; }
+    .legend-item { display: flex; align-items: center; gap: .5rem; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); }
+    .legend-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: .4rem; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-ghost); z-index: 5; }
+    .scroll-bar { width: 1px; height: 36px; background: linear-gradient(to bottom, var(--gold-dim), transparent); animation: scrollAnim 2s ease-in-out infinite; }
+    @keyframes scrollAnim { 0% { transform: scaleY(0) translateY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+    #about { padding: 8rem 0; background: var(--bg-mid); position: relative; }
+    #about::before { content: 'ABOUT'; position: absolute; right: -1rem; top: 50%; transform: translateY(-50%); font-family: var(--font-display); font-size: 14rem; font-weight: 700; color: rgba(240,192,96,.025); pointer-events: none; user-select: none; letter-spacing: -.05em; line-height: 1; }
+
+    .about-grid { display: grid; grid-template-columns: 340px 1fr; gap: 5rem; align-items: start; position: relative; z-index: 1; }
+    .about-photo-wrap { position: relative; }
+    .about-photo-wrap::before { content: ''; position: absolute; top: 14px; left: 14px; right: -14px; bottom: -14px; border: 1px solid var(--gold-dim); opacity: .3; z-index: 0; }
+    .about-photo-wrap img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; position: relative; z-index: 1; border: 1px solid var(--ink-ghost); }
+    .about-photo-placeholder { background: var(--bg-surface); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; color: var(--ink-ghost); font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; }
+
+    .about-text p { color: var(--ink-dim); font-size: 1.02rem; line-height: 1.9; margin-bottom: 1.4rem; }
+    .about-text p:first-child { font-size: 1.2rem; color: var(--ink); font-family: var(--font-display); font-weight: 400; line-height: 1.6; }
+
+    .skills-grid { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 2rem; }
+    .skill-tag { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); border: 1px solid var(--ink-ghost); padding: .28rem .65rem; transition: border-color .2s, color .2s; }
+    .skill-tag:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    #projects, #blog { padding: 8rem 0; background: var(--bg-deep); }
+    #blog { background: var(--bg-mid); }
+    
+    .projects-grid, .blog-featured-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+
+    .project-card, .blog-card-featured {
+      background: var(--bg-card); border: 1px solid var(--ink-ghost); padding: 2.25rem;
+      position: relative; overflow: hidden; transition: border-color .3s, transform .3s;
     }
-    .scroll-line {
-      width: 1px; height: 40px;
-      background: linear-gradient(to bottom, var(--ink3), transparent);
-      animation: scrollDown 1.8s ease-in-out infinite;
-    }
-    @keyframes scrollDown {
-      0%   { transform: scaleY(0); transform-origin: top; }
-      50%  { transform: scaleY(1); transform-origin: top; }
-      51%  { transform: scaleY(1); transform-origin: bottom; }
-      100% { transform: scaleY(0); transform-origin: bottom; }
+    .project-card:hover, .blog-card-featured:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
+    
+    .project-card.featured, .blog-card-featured.featured {
+      grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start;
     }
 
-    /* ── SHARED SECTION STYLES ──────────────────────────────── */
-    section { padding: 7rem 3rem; max-width: var(--max); margin: 0 auto; }
-    .section-label {
-      font-family: var(--mono); font-size: .68rem; letter-spacing: .2em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: .75rem;
-      display: flex; align-items: center; gap: .75rem;
-    }
-    .section-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
-    .section-heading {
-      font-family: var(--serif); font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 300; line-height: 1.1; margin-bottom: 3.5rem;
-    }
-    .section-heading em { font-style: italic; color: var(--accent); }
+    .project-num, .blog-num { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .12em; color: var(--ink-ghost); margin-bottom: 1.2rem; }
+    .project-title, .blog-title-custom { font-family: var(--font-display); font-size: 1.65rem; font-weight: 400; line-height: 1.2; margin-bottom: .7rem; }
+    .project-card.featured .project-title, .blog-card-featured.featured .blog-title-custom { font-size: 2.2rem; }
 
-    /* ── ABOUT ──────────────────────────────────────────────── */
-    .about-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 5rem; align-items: start; }
-    .about-img-wrap { position: relative; }
-    .about-img-placeholder {
-      width: 100%; aspect-ratio: 3/4; background: var(--bg3); border: 1px solid var(--ink3);
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: .75rem;
-      color: var(--ink3); font-family: var(--mono); font-size: .7rem; letter-spacing: .1em;
-      position: relative; overflow: hidden;
-    }
-    .about-img-placeholder::after {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,.015) 20px, rgba(255,255,255,.015) 21px);
-    }
-    .about-img-icon { font-size: 2.5rem; opacity: .3; }
-    .about-img-wrap::before {
-      content: ''; position: absolute; top: 12px; left: 12px; right: -12px; bottom: -12px;
-      border: 1px solid var(--accent); opacity: .25; z-index: -1;
-    }
-    .about-text p { color: var(--ink2); margin-bottom: 1.5rem; font-size: 1.05rem; line-height: 1.9; }
-    .about-text p:first-child { font-size: 1.25rem; color: var(--ink); font-weight: 300; }
-    .skills-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 2rem; }
-    .skill-tag {
-      font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
-      text-transform: uppercase; border: 1px solid var(--ink3);
-      color: var(--ink2); padding: .3rem .75rem; transition: border-color .2s, color .2s;
-    }
-    .skill-tag:hover { border-color: var(--accent); color: var(--accent); }
+    .project-desc, .blog-desc-custom { font-size: .9rem; color: var(--ink-dim); line-height: 1.8; margin-bottom: 1.5rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: 1.25rem; }
+    .project-tag { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .09em; text-transform: uppercase; background: var(--bg-surface); color: var(--ink-ghost); padding: .2rem .55rem; border: 1px solid var(--ink-ghost); }
+    
+    .project-link, .blog-link-custom { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); text-decoration: none; display: inline-flex; align-items: center; gap: .5rem; transition: gap .25s; }
+    .project-link:hover, .blog-link-custom:hover { gap: .9rem; }
 
-    /* ── PROJECTS ───────────────────────────────────────────── */
-    #projects { background: var(--bg2); max-width: 100%; padding: 7rem 0; }
-    #projects > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
-    .projects-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1px; background: var(--ink3); border: 1px solid var(--ink3);
-    }
-    .project-card { background: var(--bg2); padding: 2rem; transition: background .3s; position: relative; overflow: hidden; }
-    .project-card::before {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(to right, var(--accent), var(--accent2));
-      transform: scaleX(0); transform-origin: left; transition: transform .4s;
-    }
-    .project-card:hover { background: var(--bg3); }
-    .project-card:hover::before { transform: scaleX(1); }
-    .project-num { font-family: var(--mono); font-size: .65rem; color: var(--ink3); letter-spacing: .1em; margin-bottom: 1.25rem; }
-    .project-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; margin-bottom: .75rem; line-height: 1.2; }
-    .project-desc { font-size: .9rem; color: var(--ink2); line-height: 1.7; margin-bottom: 1.5rem; }
-    .project-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
-    .project-tag {
-      font-family: var(--mono); font-size: .62rem; letter-spacing: .08em;
-      text-transform: uppercase; background: var(--bg); color: var(--ink3); padding: .2rem .6rem;
-    }
-    .project-link {
-      font-family: var(--mono); font-size: .68rem; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--accent); text-decoration: none;
-      display: inline-flex; align-items: center; gap: .5rem; transition: gap .2s;
-    }
-    .project-link:hover { gap: .9rem; }
+    .project-status, .blog-status { display: inline-block; font-family: var(--font-mono); font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; border: 1px solid var(--cyan); color: var(--cyan); padding: .25rem .65rem; margin-bottom: 1.2rem; }
 
-    /* ── RESEARCH ───────────────────────────────────────────── */
+    .project-visual, .blog-visual-box { background: var(--bg-surface); border: 1px solid var(--ink-ghost); aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .project-visual img, .blog-visual-box img { width: 100%; height: 100%; object-fit: cover; }
+    .project-visual-label, .blog-visual-label { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; color: var(--ink-ghost); text-align: center; padding: 1rem; }
+    .project-visual::after, .blog-visual-box::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); animation: scan 2.5s linear infinite; opacity: .4; }
+    @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
+
+    #research { padding: 8rem 0; background: var(--bg-mid); }
     .research-list { display: flex; flex-direction: column; }
-    .research-item {
-      display: grid; grid-template-columns: 80px 1fr auto; gap: 2rem;
-      align-items: start; padding: 2rem 0; border-bottom: 1px solid var(--bg3);
-      transition: padding-left .3s; cursor: default;
-    }
-    .research-item:hover { padding-left: 1rem; }
-    .research-year { font-family: var(--mono); font-size: .72rem; color: var(--ink3); letter-spacing: .08em; padding-top: .2rem; }
-    .research-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; margin-bottom: .4rem; }
-    .research-venue { font-family: var(--mono); font-size: .7rem; color: var(--accent3); letter-spacing: .08em; margin-bottom: .5rem; }
-    .research-abstract { font-size: .88rem; color: var(--ink2); line-height: 1.7; }
-    .research-badge {
-      font-family: var(--mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase;
-      border: 1px solid var(--accent3); color: var(--accent3);
-      padding: .25rem .6rem; white-space: nowrap; height: fit-content; margin-top: .3rem;
-    }
+    .research-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 2rem; align-items: start; padding: 2rem 0; border-bottom: 1px solid var(--ink-ghost); transition: padding-left .3s; }
+    .research-item:first-child { border-top: 1px solid var(--ink-ghost); }
+    .research-year { font-family: var(--font-mono); font-size: .65rem; color: var(--ink-ghost); letter-spacing: .08em; padding-top: .2rem; }
+    .research-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 400; margin-bottom: .35rem; line-height: 1.35; }
+    .research-venue { font-family: var(--font-mono); font-size: .65rem; color: var(--cyan); letter-spacing: .07em; margin-bottom: .5rem; }
+    .research-abstract { font-size: .875rem; color: var(--ink-dim); line-height: 1.75; }
+    .research-badge { font-family: var(--font-mono); font-size: .55rem; letter-spacing: .12em; text-transform: uppercase; border: 1px solid var(--gold-dim); color: var(--gold); padding: .22rem .55rem; white-space: nowrap; height: fit-content; margin-top: .3rem; }
 
-    /* ── HOBBIES ────────────────────────────────────────────── */
-    #hobbies { background: var(--bg2); max-width: 100%; padding: 7rem 0; }
-    #hobbies > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
-    .hobbies-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-    .hobby-card { padding: 2.5rem; border: 1px solid var(--bg3); position: relative; overflow: hidden; transition: border-color .3s; }
-    .hobby-card:hover { border-color: var(--ink3); }
-    .hobby-card:nth-child(1) { grid-column: span 2; }
-    .hobby-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
-    .hobby-name { font-family: var(--sans); font-size: 1.1rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .75rem; }
-    .hobby-desc { font-size: .9rem; color: var(--ink2); line-height: 1.75; }
-    .hobby-card::after {
-      content: ''; position: absolute; top: -40px; right: -40px;
-      width: 120px; height: 120px; border-radius: 50%;
-      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-      opacity: 0; transition: opacity .4s;
-    }
-    .hobby-card:hover::after { opacity: .04; }
+    #loves { padding: 8rem 0; background: var(--bg-deep); }
+    .loves-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .love-card { background: var(--bg-card); border: 1px solid var(--ink-ghost); padding: 2.5rem; position: relative; overflow: hidden; transition: border-color .3s; }
+    .love-card:first-child { grid-column: 1 / -1; }
+    .love-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .love-name { font-family: var(--font-ui); font-size: 1rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: .75rem; }
+    .love-desc { font-size: .9rem; color: var(--ink-dim); line-height: 1.8; }
 
-    /* ── BLOG ───────────────────────────────────────────────── */
-    .blog-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; }
-    .blog-card {
-      background: var(--bg2); border: 1px solid var(--bg3); padding: 2rem;
-      transition: border-color .3s, transform .3s; text-decoration: none;
-      display: block; color: inherit;
-    }
-    .blog-card:hover { border-color: var(--ink3); transform: translateY(-3px); }
-    .blog-card.featured { grid-row: span 2; background: var(--bg3); }
-    .blog-date { font-family: var(--mono); font-size: .65rem; color: var(--ink3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 1rem; }
-    .blog-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; line-height: 1.25; margin-bottom: .75rem; color: var(--ink); }
-    .blog-card.featured .blog-title { font-size: 2rem; margin-bottom: 1rem; }
-    .blog-excerpt { font-size: .88rem; color: var(--ink2); line-height: 1.7; }
-    .blog-read { margin-top: 1.25rem; font-family: var(--mono); font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: .5rem; }
-
-    /* ── CONTACT ────────────────────────────────────────────── */
-    #contact { background: var(--bg2); max-width: 100%; padding: 7rem 0; position: relative; overflow: hidden; }
-    #contact::before {
-      content: 'CONTACT'; position: absolute; bottom: -2rem; right: -1rem;
-      font-family: var(--sans); font-size: 12rem; font-weight: 800;
-      color: var(--bg3); letter-spacing: -.04em;
-      pointer-events: none; user-select: none; line-height: 1;
-    }
-    #contact > .inner { max-width: var(--max); margin: 0 auto; padding: 0 3rem; }
+    #get-in-touch-header { padding: 8rem 0 0; background: var(--bg-mid); }
+    #contact { padding: 4rem 0 8rem; background: var(--bg-mid); position: relative; overflow: hidden; }
+    #contact::before { content: 'CONNECT'; position: absolute; bottom: -3rem; right: -2rem; font-family: var(--font-display); font-size: 13rem; font-weight: 700; color: rgba(240,192,96,.02); pointer-events: none; user-select: none; letter-spacing: -.04em; line-height: 1; }
     .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; position: relative; z-index: 1; }
-    .contact-intro { font-size: 1.1rem; color: var(--ink2); line-height: 1.8; margin-bottom: 2.5rem; }
-    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
-    .contact-link {
-      display: flex; align-items: center; gap: 1rem; text-decoration: none;
-      color: var(--ink2); font-family: var(--mono); font-size: .8rem; letter-spacing: .08em;
-      transition: color .2s; padding-bottom: 1rem; border-bottom: 1px solid var(--bg3);
-    }
-    .contact-link:hover { color: var(--accent); }
-    .contact-link-icon {
-      width: 36px; height: 36px; border: 1px solid var(--bg3);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; transition: border-color .2s;
-    }
-    .contact-link:hover .contact-link-icon { border-color: var(--accent); }
+    .contact-intro { font-size: 1.05rem; color: var(--ink-dim); line-height: 1.85; margin-bottom: 2.5rem; }
+    .contact-links { display: flex; flex-direction: column; gap: .9rem; }
+    .contact-link { display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--ink-dim); font-family: var(--font-mono); font-size: .75rem; letter-spacing: .07em; transition: color .2s; padding-bottom: .9rem; border-bottom: 1px solid var(--ink-ghost); }
+    .contact-link:hover { color: var(--gold); }
+    .contact-link-icon { width: 34px; height: 34px; border: 1px solid var(--ink-ghost); display: flex; align-items: center; justify-content: center; font-size: .85rem; }
+
     .contact-form { display: flex; flex-direction: column; gap: 1rem; }
     .form-field { display: flex; flex-direction: column; gap: .4rem; }
-    .form-label { font-family: var(--mono); font-size: .65rem; letter-spacing: .15em; text-transform: uppercase; color: var(--ink3); }
-    .form-input, .form-textarea {
-      background: var(--bg); border: 1px solid var(--bg3); color: var(--ink);
-      font-family: var(--serif); font-size: 1rem; padding: .75rem 1rem;
-      outline: none; transition: border-color .2s; resize: none;
-    }
-    .form-input:focus, .form-textarea:focus { border-color: var(--ink3); }
-    .form-textarea { height: 120px; }
-    .form-btn {
-      background: transparent; border: 1px solid var(--accent); color: var(--accent);
-      font-family: var(--mono); font-size: .72rem; letter-spacing: .15em;
-      text-transform: uppercase; padding: .9rem 2rem; cursor: pointer;
-      transition: background .2s, color .2s; align-self: flex-start;
-    }
-    .form-btn:hover { background: var(--accent); color: var(--bg); }
+    .form-label { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-ghost); }
+    .form-input, .form-textarea { background: var(--bg-surface); border: 1px solid var(--ink-ghost); color: var(--ink); font-family: var(--font-ui); font-size: .95rem; padding: .7rem 1rem; outline: none; transition: border-color .2s; }
+    .form-input:focus, .form-textarea:focus { border-color: var(--gold-dim); }
+    .form-textarea { height: 110px; resize: none; }
+    .form-btn { align-self: flex-start; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: var(--font-mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; padding: .85rem 1.8rem; cursor: pointer; transition: background .25s, color .25s; }
+    .form-btn:hover { background: var(--gold); color: var(--bg-deep); }
 
-    /* ── FOOTER ─────────────────────────────────────────────── */
-    footer { padding: 2rem 3rem; border-top: 1px solid var(--bg3); display: flex; justify-content: space-between; align-items: center; }
-    .footer-copy { font-family: var(--mono); font-size: .65rem; color: var(--ink3); letter-spacing: .08em; }
-    .footer-back {
-      font-family: var(--mono); font-size: .65rem; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--ink3); text-decoration: none;
-      transition: color .2s; display: flex; align-items: center; gap: .5rem;
-    }
-    .footer-back:hover { color: var(--accent); }
+    footer { padding: 2rem 2.5rem; border-top: 1px solid var(--ink-ghost); display: flex; justify-content: space-between; align-items: center; background: var(--bg-deep); }
+    .footer-copy { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .08em; color: var(--ink-ghost); }
+    .footer-back { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-ghost); text-decoration: none; }
 
-    /* ── SCROLL ANIMATION ───────────────────────────────────── */
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; animation: fadeUp 0.8s ease 0.2s forwards; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); animation: none; }
-
-    /* ── RESPONSIVE ─────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      nav { padding: 1.2rem 1.5rem; }
-      .nav-links { gap: 1.25rem; }
-      #hero {
-        grid-template-columns: 1fr;
-        padding: 0 1.5rem;
-        background-attachment: scroll; /* Disable parallax on mobile */
-      }
-      .hero-right { flex-direction: row; align-items: center; padding-top: 0; }
-      .hero-bg-line { display: none; }
-      section { padding: 5rem 1.5rem; }
+    @media (max-width: 960px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 7rem 1.5rem 2rem; }
+      .hero-canvas-wrap { height: 60vw; }
       .about-grid { grid-template-columns: 1fr; }
-      .projects-grid { grid-template-columns: 1fr; }
+      .projects-grid, .blog-featured-grid { grid-template-columns: 1fr; }
+      .project-card.featured, .blog-card-featured.featured { grid-template-columns: 1fr; }
       .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .blog-grid { grid-template-columns: 1fr; }
-      .blog-card.featured { grid-row: auto; }
-      .hobbies-grid { grid-template-columns: 1fr; }
-      .hobby-card:nth-child(1) { grid-column: auto; }
-      #contact::before { font-size: 5rem; }
+      .container { padding: 0 1.5rem; }
     }
-
   </style>
 </head>
 <body>
 
-
-
-
-<!-- ============================================================
-  NAVIGATION BAR
-  CHANGE: Replace "YN" with your own initials (top-left logo).
-  The links scroll to each section automatically.
-============================================================ -->
 <nav>
   <a href="#hero" class="nav-logo">KG</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#projects">Projects</a></li>
     <li><a href="#research">Research</a></li>
-    <li><a href="#hobbies">Hobbies</a></li>
+    <li><a href="#loves">Interests</a></li>
     <li><a href="#blog">Blog</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
 
-
-<!-- ============================================================
-  HERO SECTION  (full-screen opening with background photo)
-
-  BACKGROUND IMAGE:
-    In the CSS above, find:  background-image: url('your-background.jpg');
-    Replace 'your-background.jpg' with your actual image filename.
-    Put the image file in the same folder as this index.html.
-
-  OVERLAY DARKNESS:
-    The dark overlay div below keeps text readable over the image.
-    Adjust the two opacity values (0.85 and 0.50) to taste.
-    Higher = darker overlay, lower = more image visible.
-
-  OTHER EDITS IN THIS SECTION:
-    [ ] Status tag above the name
-    [ ] Your first name and last name
-    [ ] Role / title line
-    [ ] Short personal pitch (1-2 sentences)
-    [ ] 3 stat numbers and their labels
-============================================================ -->
 <section id="hero">
-
-  <!-- ============================================================
-    Dark overlay — keeps text readable over your background photo.
-    CHANGE: Increase 0.85 / 0.50 to darken, decrease to lighten.
-    Range: 0 = fully transparent, 1 = fully black.
-  ============================================================ -->
-  <div style="
-    position: absolute; inset: 0; z-index: 0;
-    background: linear-gradient(
-      to right,
-      rgba(13,13,13,0.85) 0%,
-      rgba(13,13,13,0.50) 100%
-    );
-  "></div>
-
-  <div class="hero-bg-line" style="z-index:1;"></div>
-
-  <div class="hero-left" style="position:relative; z-index:1;">
-
-    <!-- CHANGE: Small label shown above your name -->
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-divider"></div>
+  <div class="hero-left">
     <div class="hero-tag">Data Scientist · DRDO, Pune</div>
-
-    <h1 class="hero-name">Kuldeep <em>Gurjar</em></h1>
-
-    <p class="hero-title">Robotics · Reinforcement Learning · AI for Defence</p>
-
-    <p class="hero-desc">
-      I build intelligent robotic systems — from biped locomotion and dual-arm manipulation
-      to LLM-driven autonomy. Currently at DRDO developing next-generation defence robots.
-    </p>
-
+    <h1 class="hero-name">Kuldeep<br><em>Gurjar</em></h1>
+    <p class="hero-role">Robotics · Reinforcement Learning · AI for Defence</p>
+    <p class="hero-desc">Building intelligent robotic systems — from biped locomotion, dual-arm manipulation, mobile robot to LLM-driven autonomy. Working at DRDO on next-generation defence robots.</p>
     <a href="#about" class="hero-cta">Explore my work <span>→</span></a>
-  </div>
-
-  <div class="hero-right" style="position:relative; z-index:1;">
-
-    <div class="hero-stat">
-      <div class="hero-stat-num">4+</div>
-      <div class="hero-stat-label">Years experience</div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">3+</div><div class="stat-label">Years exp.</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Publications</div></div>
+      <div class="stat"><div class="stat-num">comming soon</div><div class="stat-label">Projects</div></div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">4</div>
-      <div class="hero-stat-label">Papers published</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num">10+</div>
-      <div class="hero-stat-label">Projects completed</div>
-    </div>
-
   </div>
-
-  <!-- Animated scroll indicator — no changes needed -->
-  <div class="hero-scroll" style="position:relative; z-index:1;">
-    <div class="scroll-line"></div>
-    scroll
+  <div class="hero-canvas-wrap">
+    <canvas id="robot-canvas"></canvas>
+    <div class="scene-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#40c8c0"></div> </div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f0c060"></div> </div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c04858"></div> </div>
+      <div class="legend-item"><div class="legend-dot" style="background:#8860f0"></div> </div>
+    </div>
   </div>
-
+  <div class="hero-scroll"><div class="scroll-bar"></div>scroll</div>
 </section>
 
-
-<!-- ============================================================
-  ABOUT SECTION
-  CHANGE:
-    [ ] ADD YOUR PHOTO — see detailed comment inside the photo block
-    [ ] Rewrite the 3 bio paragraphs in your own words
-    [ ] Update skill tags to match your actual tech stack
-============================================================ -->
 <section id="about">
-  <div class="section-label">About me</div>
-  <h2 class="section-heading">A little about <em>who I am</em></h2>
-  <div class="about-grid">
-
-    <!-- LEFT: Your photo ───────────────────────────────────── -->
-    <div class="about-img-wrap fade-in">
-
-      <!--
-        CHANGE: ADD YOUR PHOTO HERE
-        ────────────────────────────────────────────────────
-        Step 1: Delete the entire placeholder block below
-                (from <div class="about-img-placeholder">
-                 to its closing </div>)
-
-        Step 2: Replace it with this, using your image filename:
-
-            <img
-              src="photo.jpg"
-              alt="Your Name"
-              style="width:100%; aspect-ratio:3/4; object-fit:cover; display:block;"
-            />
-
-        Step 3: Put your photo file (e.g. photo.jpg or photo.png)
-                in the SAME FOLDER as this index.html file.
-
-        Tips:
-          - Portrait orientation works best (taller than wide)
-          - Face centered in the upper portion looks great
-          - Supported formats: .jpg  .jpeg  .png  .webp
-        ────────────────────────────────────────────────────
-      -->
-      <img
-              src="kd.jpg"
-              alt="Your Name"
-              style="width:100%; aspect-ratio:3/4; object-fit:cover; display:block;"
-            />
-
-    </div>
-
-    <!-- RIGHT: Bio text ─────────────────────────────────────── -->
-    <div class="about-text fade-in">
-
-      <p>
-        Hi, I'm <strong>Kuldeep Gurjar</strong> — a robotics engineer and AI researcher specialising
-        in reinforcement learning, motion planning, and intelligent autonomous systems.
-      </p>
-
-      <p>
-        I'm currently a Data Scientist (RDE Engineer) at the Defence Research &amp; Development
-        Organisation (DRDO), Pune, where I work on biped locomotion, dual-arm manipulation,
-        and LLM/VLM integration for defence robots. Before this I was a Senior Research Fellow
-        at DIAT, and a Research Intern at IISc Bangalore's Robert Bosch Centre for Cyber-Physical Systems.
-      </p>
-
-      <p>
-        My work spans the full stack — from formal methods like Signal Temporal Logic to hands-on
-        hardware deployment on platforms like the Nvidia Jetson AGX Orin, UR10 manipulator, and DRDO's
-        BRS1 biped. I hold an M.Tech in Automation &amp; Robotics from DIAT, Pune.
-      </p>
-
-      <div class="skills-row">
-        <span class="skill-tag">ROS1 &amp; ROS2</span>
-        <span class="skill-tag">Python</span>
-        <span class="skill-tag">C++</span>
-        <span class="skill-tag">Reinforcement Learning</span>
-        <span class="skill-tag">Deep Learning</span>
-        <span class="skill-tag">PyTorch</span>
-        <span class="skill-tag">TensorFlow</span>
-        <span class="skill-tag">Computer Vision</span>
-        <span class="skill-tag">LLM &amp; VLM</span>
-        <span class="skill-tag">Gazebo / MuJoCo</span>
-        <span class="skill-tag">Isaac Sim</span>
-        <span class="skill-tag">Path Planning</span>
-        <span class="skill-tag">Signal Temporal Logic</span>
-        <span class="skill-tag">MatLab</span>
-        <span class="skill-tag">FMCW Radar</span>
-        <span class="skill-tag">EEG</span>
+  <div class="container">
+    <div class="section-label">About me</div>
+    <h2 class="section-heading reveal">Who I <em>am</em></h2>
+    <div class="about-grid">
+      <div class="about-photo-wrap reveal">
+        <img src="/home/robot/Documents/my_ws/personal_website/kd1.png" alt="Kuldeep Gurjar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="about-photo-placeholder" style="display:none; width:100%; aspect-ratio:3/4;"><span>👤</span>photo.jpg</div>
       </div>
-
+      <div class="about-text reveal reveal-delay-1">
+        <p> <strong>comming soon</strong></p>
+        <!-- <p>Hi, I'm <strong>Kuldeep Gurjar</strong> — a robotics engineer and AI researcher specialising in ROS2, motion planning,LLM for robots, and intelligent autonomous systems.</p> -->
+        <!-- <p>Currently a Data Scientist (RDE Engineer) at DRDO, Pune, working on biped locomotion, dual-arm manipulation, and LLM/VLM integration for DRDO robots.</p>
+        <p>My work spans the full stack — from formal methods like Signal Temporal Logic to hands-on hardware on Nvidia Jetson AGX Orin, UR10 manipulators, and DRDO's BRS1 biped & URS1.</p>
+        <div class="skills-grid">
+          <span class="skill-tag">ROS2</span><span class="skill-tag">Python</span><span class="skill-tag">C++</span><span class="skill-tag">MatLab</span><span class="skill-tag">PyTorch</span>
+          <span class="skill-tag">Isaac Sim</span><span class="skill-tag">Gazebo Sim</span><span class="skill-tag">MoveIt2</span><span class="skill-tag">Nav2</span>
+          <span class="skill-tag">Deep Learning</span><span class="skill-tag">Reinforcement Learning</span><span class="skill-tag">LLM &amp; VLM</span>
+          <span class="skill-tag">Docker</span><span class="skill-tag">Git</span>
+        </div> -->
+      </div>
     </div>
   </div>
 </section>
 
-
-<!-- ============================================================
-  PROJECTS SECTION
-  CHANGE: Replace each project card with your real projects.
-  Each card: number · title · description · tech tags · link.
-
-  To ADD a project: copy any project-card block, paste inside
-    .projects-grid, and update the number, title, desc, tags, link.
-  To REMOVE: delete the entire project-card block.
-============================================================ -->
-<div id="projects">
-  <div class="inner">
+<section id="projects">
+  <div class="container">
     <div class="section-label">Work</div>
-    <h2 class="section-heading">Selected <em>projects</em></h2>
-    <div class="projects-grid fade-in">
-
-      <!-- PROJECT 1 ──────────────────────────────────────────── -->
-      <div class="project-card">
-        <div class="project-num">01</div>
-        <h3 class="project-title">Biped Robot Locomotion (BRS1 · DRDO)</h3>
-        <p class="project-desc">
-          Controller design and reinforcement learning for stable walking of DRDO's BRS1 biped.
-          Includes full software stack development and LLM/VLM-based task understanding.
-        </p>
-        <div class="project-tags">
-          <span class="project-tag">RL (PPO/TD3)</span>
-          <span class="project-tag">ROS2</span>
-          <span class="project-tag">LLM/VLM</span>
-          <span class="project-tag">Isaac Sim</span>
-        </div>
-        <a href="#" class="project-link">View project →</a>
+    <h2 class="section-heading reveal">Selected <em>projects</em></h2>
+    <div class="projects-grid reveal">
+      <div class="project-card featured">
+        <div class="project-info">
+          <div class="project-num">01</div>
+          <div class="project-status">Active — DRDO</div>
+          <h3 class="project-title">COMMING SOON</h3>
+          </div>
+        <div class="project-visual"><div class="project-visual-label">[ Dual Arm Visual ]</div></div>
       </div>
-
-      <!-- PROJECT 2 ──────────────────────────────────────────── -->
-      <div class="project-card">
-        <div class="project-num">02</div>
-        <h3 class="project-title">Dual-Arm Motion Planning (UR10 · DRDO)</h3>
-        <p class="project-desc">
-          Dual-arm upper body robotic system with admittance control for compliant interaction.
-          Deployed on DRDO's upper body platform using the UR10 manipulator.
-        </p>
-        <div class="project-tags">
-          <span class="project-tag">MoveIt</span>
-          <span class="project-tag">Admittance Control</span>
-          <span class="project-tag">ROS2</span>
-          <span class="project-tag">C++</span>
-        </div>
-        <a href="#" class="project-link">View project →</a>
-      </div>
-
-      <!-- PROJECT 3 ──────────────────────────────────────────── -->
-      <div class="project-card">
-        <div class="project-num">03</div>
-        <h3 class="project-title">RL with Signal Temporal Logic (IISc · Bosch)</h3>
-        <p class="project-desc">
-          Reward shaping for RL using funnel-based control when tasks are specified by STL.
-          Proposed the time-aware TD3PG algorithm to handle time-sensitive robot states.
-        </p>
-        <div class="project-tags">
-          <span class="project-tag">TD3PG</span>
-          <span class="project-tag">STL</span>
-          <span class="project-tag">Funnel Control</span>
-          <span class="project-tag">Python</span>
-        </div>
-        <a href="#" class="project-link">View project →</a>
-      </div>
-
-      <!-- PROJECT 4 ──────────────────────────────────────────── -->
-      <div class="project-card">
-        <div class="project-num">04</div>
-        <h3 class="project-title">EEG-Based Brain-Robot Interface</h3>
-        <p class="project-desc">
-          Classifying upper-limb motor imagery tasks from EEG signals using ratio of band
-          power features. Nominated for best paper at ICARM 2024, Tokyo.
-        </p>
-        <div class="project-tags">
-          <span class="project-tag">EEG</span>
-          <span class="project-tag">Signal Processing</span>
-          <span class="project-tag">Scikit-Learn</span>
-          <span class="project-tag">Python</span>
-        </div>
-        <a href="https://doi.org/10.1109/ICARM62033.2024.10715808" class="project-link">View paper →</a>
-      </div>
-
-      <!-- PROJECT 5 ──────────────────────────────────────────── -->
-      <div class="project-card">
-        <div class="project-num">05</div>
-        <h3 class="project-title">Drone State Identification via RF Signal</h3>
-        <p class="project-desc">
-          Wavelet-transform-based system to detect and classify drone states (hovering, flying,
-          recording) from RF signals across sky and hilly backgrounds using Random Forest.
-        </p>
-        <div class="project-tags">
-          <span class="project-tag">Wavelet Transform</span>
-          <span class="project-tag">Random Forest</span>
-          <span class="project-tag">RF Signal</span>
-          <span class="project-tag">Python</span>
-        </div>
-        <a href="https://doi.org/10.2514/1.I011389" class="project-link">View paper →</a>
-      </div>
-
-      <!-- PROJECT 6 ──────────────────────────────────────────── -->
-      <div class="project-card">
-        <div class="project-num">06</div>
-        <h3 class="project-title">Autonomous Mobile Robot (ROS · Gazebo)</h3>
-        <p class="project-desc">
-          Differential-drive mobile robot with SLAM, path planning (Dijkstra, A*, RRT),
-          MPC control, and RGB-D mapping using Turtlebot3 and Kinect camera.
-        </p>
-        <div class="project-tags">
-          <span class="project-tag">ROS</span>
-          <span class="project-tag">Gazebo</span>
-          <span class="project-tag">SLAM</span>
-          <span class="project-tag">MPC</span>
-        </div>
-        <a href="#" class="project-link">View project →</a>
-      </div>
-
     </div>
   </div>
-</div>
+</section>
 
-
-<!-- ============================================================
-  RESEARCH SECTION
-  CHANGE: Replace each item with your actual papers.
-  Each item: year · title · venue · short abstract · status badge.
-
-  Badge options (change the text inside the <div>):
-    "Published"  |  "Preprint"  |  "In Review"  |  "Thesis"
-
-  To ADD: copy any research-item block and paste inside .research-list.
-  To REMOVE: delete the entire research-item block.
-============================================================ -->
 <section id="research">
-  <div class="section-label">Academia</div>
-  <h2 class="section-heading">Research &amp; <em>publications</em></h2>
-  <div class="research-list">
-
-    <!-- PAPER 1 ─────────────────────────────────────────────── -->
-    <div class="research-item fade-in">
-      <div class="research-year">2024</div>
-      <div>
-        <div class="research-title">Classifying EEG-based Upper Limb Motor Imagery Tasks for Brain-Robot Interface-based System Development</div>
-        <div class="research-venue">ICARM 2024 · International Conference on Advanced Robotics and Mechatronics, Tokyo, Japan</div>
-        <div class="research-abstract">
-          Novel ratio of band power (RBP) features for classifying upper-limb motor imagery tasks from EEG,
-          enabling reliable brain-robot interface control. Nominated for best conference paper.
+  <div class="container">
+    <div class="section-label">Academia</div>
+    <h2 class="section-heading reveal">Research &amp; <em>publications</em></h2>
+    <div class="research-list">
+      <div class="research-item reveal">
+        <div class="research-year">2024</div>
+        <div>
+          <div class="research-title">Classifying EEG-based Upper Limb Motor Imagery Tasks</div>
+          <div class="research-venue">ICARM 2024 · Tokyo, Japan</div>
+          <div class="research-abstract">Novel ratio of band power (RBP) features for classifying upper-limb motor imagery tasks from EEG, enabling reliable brain-robot interface control.</div>
+          <a href="https://ieeexplore.ieee.org/abstract/document/10715808/" target="_blank" style="color:var(--gold); font-family:var(--font-mono); font-size:0.7rem; text-decoration:none; margin-top:0.5rem; display:inline-block;">Read Paper →</a>
         </div>
+        <div class="research-badge">Best Paper Nom.</div>
       </div>
-      <div class="research-badge">Best Paper Nom.</div>
-    </div>
-
-    <!-- PAPER 2 ─────────────────────────────────────────────── -->
-    <div class="research-item fade-in">
-      <div class="research-year">2024</div>
-      <div>
-        <div class="research-title">ResNet50-based Automated Method for Monocular Depth Estimation using Video</div>
-        <div class="research-venue">IEEE CONECCT 2024 · Electronics, Computing and Communication Technologies, Bangalore</div>
-        <div class="research-abstract">
-          A ResNet50-based pipeline for monocular depth estimation from video, providing accurate
-          scene depth without stereo hardware.
+      <div class="research-item reveal">
+        <div class="research-year">2024</div>
+        <div>
+          <div class="research-title">Advanced Wavelet Transform-Based Automated System for Drone State Identification Using Radio-Frequency Signal</div>
+          <div class="research-venue">Journal of Aerospace Information Systems (JAIS), Vol. 21, No. 11</div>
+          <div class="research-abstract">NWavelet-based classification of drone operational states from RF signals across diverse
+            backgrounds using a Random Forest classifier.</div>
+          <a href="https://arc.aiaa.org/doi/abs/10.2514/1.I011389?journalCode=jais" target="_blank" style="color:var(--gold); font-family:var(--font-mono); font-size:0.7rem; text-decoration:none; margin-top:0.5rem; display:inline-block;">Read Paper →</a>
         </div>
+        <div class="research-badge">Published</div>
       </div>
-      <div class="research-badge">Published</div>
-    </div>
-
-    <!-- PAPER 3 ─────────────────────────────────────────────── -->
-    <div class="research-item fade-in">
-      <div class="research-year">2024</div>
-      <div>
-        <div class="research-title">Advanced Wavelet Transform-Based Automated System for Drone State Identification Using Radio-Frequency Signal</div>
-        <div class="research-venue">Journal of Aerospace Information Systems (JAIS), Vol. 21, No. 11</div>
-        <div class="research-abstract">
-          Wavelet-based classification of drone operational states (connected, hovering, flying, recording)
-          from RF signals across diverse backgrounds using a Random Forest classifier.
+      <div class="research-item reveal reveal-delay-3">
+        <div class="research-year">2024</div>
+        <div>
+          <div class="research-title">Non-Invasive Age and Gender Classification of Children Using Radar-Based Vital Sign Analysis</div>
+          <div class="research-venue">Internet of Things and Cyber-Physical Systems (Under Review)</div>
+          <div class="research-abstract">
+            IWR radar-based vital sign data with machine learning for non-invasive contact-free
+            paediatric monitoring of age and gender classification.
+          </div>
         </div>
+        <div class="research-badge in-review">In Review</div>
       </div>
-      <div class="research-badge">Published</div>
     </div>
-
-    <!-- PAPER 4 ─────────────────────────────────────────────── -->
-    <div class="research-item fade-in">
-      <div class="research-year">2024</div>
-      <div>
-        <div class="research-title">Non-Invasive Age and Gender Classification of Children Using Radar-Based Vital Sign Analysis</div>
-        <div class="research-venue">Internet of Things and Cyber-Physical Systems (Under Review)</div>
-        <div class="research-abstract">
-          IWR radar-based vital sign data is used with machine learning to non-invasively classify
-          age and gender of children, enabling contact-free paediatric monitoring.
-        </div>
-      </div>
-      <div class="research-badge">In Review</div>
-    </div>
-
   </div>
 </section>
 
-
-<!-- ============================================================
-  HOBBIES SECTION
-  CHANGE: Replace cards with your actual hobbies.
-  Each card: emoji icon · name · short description.
-
-  The FIRST card is always full-width — use it for your main hobby.
-  Remaining cards split into a 2-column grid.
-
-  To ADD: copy any hobby-card block and paste here.
-  To REMOVE: delete the entire hobby-card block.
-============================================================ -->
-<div id="hobbies">
-  <div class="inner">
+<section id="loves">
+  <div class="container">
     <div class="section-label">Beyond work</div>
-    <h2 class="section-heading">Things I <em>love</em></h2>
-    <div class="hobbies-grid fade-in">
-
-      <!-- HOBBY 1 — full-width card ──────────────────────────── -->
-      <div class="hobby-card">
-        <span class="hobby-icon">🏎️</span>
-        <div class="hobby-name">Go-Kart Racing &amp; Engineering</div>
-        <p class="hobby-desc">
-          Competed in national and international go-kart championships — building both IC-engine
-          and electric karts from scratch with Team Scavengers and Team Advait at MITS Gwalior.
-          Won the best presentation award at the e-NKRC. Racing taught me that engineering
-          under pressure is where theory meets reality.
-        </p>
-      </div>
-
-      <!-- HOBBY 2 ────────────────────────────────────────────── -->
-      <div class="hobby-card">
-        <span class="hobby-icon">🤖</span>
-        <div class="hobby-name">Robotics Teaching</div>
-        <p class="hobby-desc">
-          Delivered hands-on ROS2 tutorials at DIAT's School of Robotics for postgraduate students,
-          covering robot dynamics, kinematics, and Turtlebot3 hardware sessions.
-        </p>
-      </div>
-
-      <!-- HOBBY 3 ────────────────────────────────────────────── -->
-      <div class="hobby-card">
-        <span class="hobby-icon">📖</span>
-        <div class="hobby-name">Reading &amp; Research</div>
-        <p class="hobby-desc">
-          Deep-diving into papers on RL, formal methods, and neuroscience.
-          I believe the boundary between robotics and biology is where the most
-          interesting problems live.
-        </p>
-      </div>
-
-      <!-- HOBBY 4 ────────────────────────────────────────────── -->
-      <div class="hobby-card">
-        <span class="hobby-icon">🔬</span>
-        <div class="hobby-name">Electronics &amp; Embedded Systems</div>
-        <p class="hobby-desc">
-          Tinkering with Raspberry Pi, Arduino, and Jetson platforms.
-          From PLC training in Pune to embedded C — hardware hacking keeps
-          my software thinking grounded.
-        </p>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-<!-- ============================================================
-  BLOG SECTION
-  CHANGE: Replace each card with links to your actual posts.
-  The FEATURED card (first) is larger — use it for your best post.
-
-  For each card:
-    [ ] href="#" → replace with your real post URL
-    [ ] Date, title, and excerpt text
-
-  If you have no blog yet: delete this entire section and remove
-  <li><a href="#blog">Blog</a></li> from the nav at the top.
-============================================================ -->
-<section id="blog">
-  <div class="section-label">Writing</div>
-  <h2 class="section-heading">From the <em>blog</em></h2>
-  <div class="blog-grid fade-in">
-
-    <!-- FEATURED POST — large 2-row card ───────────────────── -->
-    <a href="#" class="blog-card featured">
-      <div class="blog-date">2024</div>
-      <div class="blog-title">Why I stopped fighting ROS and started appreciating its philosophy</div>
-      <p class="blog-excerpt">
-        After years of working in ROS1 and ROS2 across mobile robots, manipulators, and bipeds,
-        I finally understood that the framework's verbosity isn't friction — it's encoding decades
-        of hard-won lessons about distributed robotics systems.
-      </p>
-      <div class="blog-read">Read essay →</div>
-    </a>
-
-    <a href="#" class="blog-card">
-      <div class="blog-date">2024</div>
-      <div class="blog-title">Sim-to-real with bipeds: what actually breaks</div>
-      <p class="blog-excerpt">A practical account of the gap between Isaac Sim and DRDO's BRS1 hardware.</p>
-      <div class="blog-read">Read →</div>
-    </a>
-
-    <a href="#" class="blog-card">
-      <div class="blog-date">2023</div>
-      <div class="blog-title">Signal Temporal Logic as a reward shaping tool</div>
-      <p class="blog-excerpt">How formal task specifications can improve RL policy robustness.</p>
-      <div class="blog-read">Read →</div>
-    </a>
-
-    <a href="#" class="blog-card">
-      <div class="blog-date">2023</div>
-      <div class="blog-title">Reading EEG signals for robot control</div>
-      <p class="blog-excerpt">Band power features, motor imagery tasks, and what the neuroscience actually says.</p>
-      <div class="blog-read">Read →</div>
-    </a>
-
+    <h2 class="section-heading reveal">Things I <em>love</em></h2>
+    <div class="loves-grid reveal">
+      <div class="love-card">
+        <span class="love-icon">🏎️</span>
+        <div class="love-name">COMMING SOON</div>
+        </div>
   </div>
 </section>
 
-
-<!-- ============================================================
-  CONTACT SECTION
-  CHANGE:
-    [ ] Intro paragraph text
-    [ ] Email: update href="mailto:..." AND the visible text (both!)
-    [ ] GitHub: update the href URL AND the visible text
-    [ ] LinkedIn: update the href URL AND the visible text
-    [ ] Twitter/X: update the href URL AND the @handle text
-
-  TO MAKE THE FORM SEND REAL EMAILS (free, no backend needed):
-    1. Sign up at https://formspree.io  (free plan: 50 emails/month)
-    2. Create a new form → copy your endpoint URL
-       (looks like:  https://formspree.io/f/xabcdefg)
-    3. Change the opening <form> tag below from:
-         <form class="contact-form" onsubmit="handleSubmit(event)">
-       to:
-         <form class="contact-form" action="https://formspree.io/f/xabcdefg" method="POST">
-    4. Delete the handleSubmit() function in the JS section below
-============================================================ -->
-<div id="contact">
-  <div class="inner">
-    <div class="section-label">Get in touch</div>
-    <h2 class="section-heading">Let's <em>connect</em></h2>
-    <div class="contact-grid">
-
-      <!-- LEFT: Intro + social links ──────────────────────── -->
-      <div>
-        <p class="contact-intro">
-          Whether you want to collaborate on robotics research, discuss reinforcement learning,
-          or explore opportunities at the intersection of AI and defence systems — I'm always
-          happy to connect with curious people.
-        </p>
-        <div class="contact-links">
-
-          <a href="/cdn-cgi/l/email-protection#117a647d757474617d707a79707f627e7f6251767c70787d3f727e7c" class="contact-link">
-            <div class="contact-link-icon">✉</div>
-            <span class="__cf_email__" data-cfemail="e9829c858d8c8c998588828188879a86879aa98e84888085c78a8684">[email&#160;protected]</span>
-          </a>
-
-          <a href="https://scholar.google.com" target="_blank" class="contact-link">
-            <div class="contact-link-icon">G</div>
-            Google Scholar Profile
-          </a>
-
-          <a href="https://github.com/kuldeepgurjar" target="_blank" class="contact-link">
-            <div class="contact-link-icon">⌥</div>
-            github.com/kuldeepgurjar
-          </a>
-
-          <a href="https://linkedin.com/in/kuldeepgurjar" target="_blank" class="contact-link">
-            <div class="contact-link-icon">in</div>
-            linkedin.com/in/kuldeepgurjar
-          </a>
-
+<section id="blog">
+  <div class="container">
+    <div class="section-label">Writing</div>
+    <h2 class="section-heading reveal">From the <em>blog</em></h2>
+    <div class="blog-featured-grid reveal">
+      <div class="blog-card-featured featured">
+        <div class="blog-info-custom">
+          <div class="blog-num">POST 01</div>
+          <div class="blog-status">Page</div>
+          <h3 class="blog-title-custom">Why to use Turbo Quante</h3>
+          <p class="blog-desc-custom">After struggling with big KV cache models deployment on jetson, I started using Turbo Quant.</p>
+          <a href="/home/robot/Documents/my_ws/personal_website/turbo_quant.html" target="_blank" class="blog-link-custom">Read full Turbo Quant →</a>
         </div>
+        <div class="blog-visual-box"><img src="/home/robot/Documents/my_ws/personal_website/Quantization-hero.gif" alt="Turbo Quant Blog"></div>
       </div>
-
-      <!-- RIGHT: Contact form ──────────────────────────────── -->
-      <!-- See Formspree instructions above to make this send real emails -->
-      <form class="contact-form" onsubmit="handleSubmit(event)">
-        <div class="form-field">
-          <label class="form-label" for="fname">Name</label>
-          <input class="form-input" id="fname" type="text" placeholder="Your name" required />
-        </div>
-        <div class="form-field">
-          <label class="form-label" for="femail">Email</label>
-          <input class="form-input" id="femail" type="email" placeholder="you@example.com" required />
-        </div>
-        <div class="form-field">
-          <label class="form-label" for="fmessage">Message</label>
-          <textarea class="form-textarea" id="fmessage" placeholder="What's on your mind?" required></textarea>
-        </div>
-        <button class="form-btn" type="submit">Send message →</button>
-      </form>
-
     </div>
   </div>
-</div>
+</section>
 
+<section id="get-in-touch-header">
+  <div class="container">
+    <div class="section-label">Contact</div>
+    <h2 class="section-heading reveal">Get in <em>touch</em></h2>
+  </div>
+</section>
 
-<!-- ============================================================
-  FOOTER
-  CHANGE: Replace "Your Name" with your actual name.
-          Update the year if needed.
-============================================================ -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="reveal">
+        <p class="contact-intro">Whether you want to collaborate on robotics research, discuss RL, or explore opportunities at DRDO — I'm always happy to connect.</p>
+        <div class="contact-links">
+          <a href="mailto:kuldeeplakhansons@gmail.com" class="contact-link"><div class="contact-link-icon">✉</div>kuldeeplakhansons@gmail.com</a>
+          <a href="https://scholar.google.com/citations?user=WpZf59UAAAAJ&hl=en" target="_blank" class="contact-link"><div class="contact-link-icon">G</div>Google Scholar Profile</a>
+          <a href="https://shivxshakti.github.io/" target="_blank" class="contact-link"><div class="contact-link-icon">⌥</div>shivxshakti.github.io</a>
+          <a href="https://www.linkedin.com/in/kuldeepgurjar/" target="_blank" class="contact-link"><div class="contact-link-icon">in</div>linkedin.com/in/kuldeepgurjar</a>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <form class="contact-form" action="https://formspree.io/f/kuldeeplakhansons@gmail.com" method="POST">
+          <div class="form-field"><label class="form-label">Name</label><input class="form-input" type="text" name="name" placeholder="Your name" required /></div>
+          <div class="form-field"><label class="form-label">Email</label><input class="form-input" type="email" name="_replyto" placeholder="you@example.com" required /></div>
+          <div class="form-field"><label class="form-label">Message</label><textarea class="form-textarea" name="message" placeholder="What's on your mind?" required></textarea></div>
+          <button class="form-btn" type="submit">Send message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <span class="footer-copy">© 2025 Kuldeep Gurjar. Built with HTML · Hosted on GitHub Pages.</span>
   <a href="#hero" class="footer-back">↑ Back to top</a>
 </footer>
 
+<script>
+/* 1. THREE.JS ROBOTICS SCENE (Restored original detailed models + New Vehicle Models) */
+(function initRobotScene() {
+  const canvas = document.getElementById('robot-canvas');
+  if (!canvas) return;
 
-<!-- ============================================================
-  JAVASCRIPT — generally no changes needed.
-  Only change: if you switch to Formspree, delete handleSubmit().
-============================================================ -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  // Smooth ring follow with lerp
-  (function animateRing() {
-    ringX += (mouseX - ringX) * 0.12;
-    ringY += (mouseY - ringY) * 0.12;
-    ring.style.left = ringX + 'px';
-    ring.style.top  = ringY + 'px';
-    requestAnimationFrame(animateRing);
-  })();
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  camera.position.set(0, 2, 10);
+  camera.lookAt(0, 0.5, 0);
 
-  // Scroll-triggered fade-in animations
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  scene.fog = new THREE.FogExp2(0x060810, 0.06);
 
-  // Contact form — shows a visual success state only (no email sent by defau
+  const gridHelper = new THREE.GridHelper(20, 20, 0x1a2030, 0x111820);
+  gridHelper.position.y = -1.8;
+  scene.add(gridHelper);
+
+  const ambient = new THREE.AmbientLight(0x101828, 1.5);
+  scene.add(ambient);
+
+  const keyLight = new THREE.PointLight(0xf0c060, 3, 15);
+  keyLight.position.set(2, 4, 3);
+  keyLight.castShadow = true;
+  scene.add(keyLight);
+
+  const fillLight = new THREE.PointLight(0x40c8c0, 2, 12);
+  fillLight.position.set(-4, 2, -2);
+  scene.add(fillLight);
+
+  const rimLight = new THREE.PointLight(0x8860f0, 1.5, 10);
+  rimLight.position.set(0, 5, -5);
+  scene.add(rimLight);
+
+  /* Materials */
+  const matMobile = new THREE.MeshStandardMaterial({ color: 0x40c8c0, metalness: .7, roughness: .3 });
+  const matHumanoid = new THREE.MeshStandardMaterial({ color: 0xc8d0e0, metalness: .8, roughness: .2 });
+  const matArm = new THREE.MeshStandardMaterial({ color: 0xc04858, metalness: .7, roughness: .3 });
+  const matLLM = new THREE.MeshStandardMaterial({ color: 0x8860f0, metalness: .5, roughness: .4, emissive: 0x4430a0, emissiveIntensity: .4 });
+  const matJoint = new THREE.MeshStandardMaterial({ color: 0x202530, metalness: .9, roughness: .15 });
+  const matGold = new THREE.MeshStandardMaterial({ color: 0xf0c060, metalness: .9, roughness: .1 });
+  const matVehicleFrame = new THREE.MeshStandardMaterial({ color: 0x505560, metalness: .8, roughness: .4 });
+
+  function createMobilePlatform() {
+    const group = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.BoxGeometry(.9, .35, 1.3), matMobile);
+    body.position.y = .25;
+    body.castShadow = true;
+    group.add(body);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(.18, 12, 8, 0, Math.PI*2, 0, Math.PI/2), matGold);
+    dome.position.y = .45;
+    group.add(dome);
+    const wheelGeo = new THREE.CylinderGeometry(.18, .18, .12, 16);
+    [[.52,.05,.45], [-.52,.05,.45], [.52,.05,-.45], [-.52,.05,-.45]].forEach(([x,y,z]) => {
+      const w = new THREE.Mesh(wheelGeo, matJoint);
+      w.rotation.z = Math.PI/2;
+      w.position.set(x,y,z);
+      w.castShadow = true;
+      group.add(w);
+    });
+    return group;
+  }
+
+  function createHumanoid() {
+    const group = new THREE.Group();
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(.5, .65, .3), matHumanoid);
+    torso.position.y = .8; torso.castShadow = true;
+    group.add(torso);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(.32, .32, .28), matHumanoid);
+    head.position.y = 1.3;
+    group.add(head);
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(.26, .08, .04), matLLM);
+    visor.position.set(0, 1.31, .15);
+    group.add(visor);
+    const hips = new THREE.Mesh(new THREE.BoxGeometry(.44, .18, .26), matJoint);
+    hips.position.y = .46;
+    group.add(hips);
+    [-1, 1].forEach(side => {
+      const uLeg = new THREE.Mesh(new THREE.CylinderGeometry(.09, .08, .45, 8), matHumanoid);
+      uLeg.position.set(side * .16, .17, 0);
+      group.add(uLeg);
+      const lLeg = new THREE.Mesh(new THREE.CylinderGeometry(.07, .06, .4, 8), matHumanoid);
+      lLeg.position.set(side * .16, -.32, 0);
+      group.add(lLeg);
+    });
+    return group;
+  }
+
+  function createRoboticArm() {
+    const group = new THREE.Group();
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(.22, .28, .18, 16), matArm);
+    group.add(base);
+    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(.16, 10, 10), matJoint);
+    shoulder.position.y = .18;
+    group.add(shoulder);
+    const link1 = new THREE.Mesh(new THREE.CylinderGeometry(.08, .09, .55, 10), matArm);
+    link1.position.set(.15, .48, 0); link1.rotation.z = -.5;
+    group.add(link1);
+    const link2 = new THREE.Mesh(new THREE.CylinderGeometry(.07, .08, .5, 10), matArm);
+    link2.position.set(.58, 1.0, 0); link2.rotation.z = -.8;
+    group.add(link2);
+    return group;
+  }
+
+  function createLLMCore() {
+    const group = new THREE.Group();
+    const orb = new THREE.Mesh(new THREE.SphereGeometry(.28, 32, 32), matLLM);
+    group.add(orb);
+    const ringGeo = new THREE.TorusGeometry(.6, .018, 8, 64);
+    const ring1 = new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color: 0x8860f0, emissive: 0x6040d0, emissiveIntensity: .6 }));
+    ring1.rotation.x = .4;
+    group.add(ring1);
+    const ring2 = new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color: 0x40c8c0, emissive: 0x20a898, emissiveIntensity: .5 }));
+    ring2.rotation.z = Math.PI/2.5;
+    group.add(ring2);
+    group.userData = { ring1, ring2 };
+    return group;
+  }
+
+  function createGoKart() {
+    const group = new THREE.Group();
+    // Chassis
+    const base = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.1, 0.8), matVehicleFrame);
+    base.position.y = 0.1;
+    group.add(base);
+    // Seat
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.4), matJoint);
+    seat.position.set(-0.1, 0.25, 0);
+    group.add(seat);
+    // Engine block
+    const engine = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), matGold);
+    engine.position.set(-0.4, 0.25, 0);
+    group.add(engine);
+    // Wheels
+    const wheelGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.15, 16);
+    [[0.45, 0.1, 0.4], [0.45, 0.1, -0.4], [-0.45, 0.1, 0.4], [-0.45, 0.1, -0.4]].forEach(pos => {
+      const w = new THREE.Mesh(wheelGeo, matJoint);
+      w.rotation.x = Math.PI/2;
+      w.position.set(...pos);
+      group.add(w);
+    });
+    return group;Group
+  }
+
+  function createBAJA() {
+    const group = new THREE.Group();
+    // High clearance chassis
+    const base = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.2, 0.6), matVehicleFrame);
+    base.position.y = 0.4;
+    group.add(base);
+    // Roll Cage tubes
+    const tubeGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.8, 8);
+    [[-0.4, 0, 0.25], [0.4, 0, 0.25], [-0.4, 0, -0.25], [0.4, 0, -0.25]].forEach(pos => {
+      const tube = new THREE.Mesh(tubeGeo, matVehicleFrame);
+      tube.position.set(pos[0], 0.7, pos[2]);
+      group.add(tube);
+    });
+    // Large Off-road wheels
+    const wheelGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16);
+    [[0.5, 0.3, 0.4], [0.5, 0.3, -0.4], [-0.5, 0.3, 0.4], [-0.5, 0.3, -0.4]].forEach(pos => {
+      const w = new THREE.Mesh(wheelGeo, matJoint);
+      w.rotation.x = Math.PI/2;
+      w.position.set(...pos);
+      group.add(w);
+    });
+    return group;
+  }
+
+  const mobile = createMobilePlatform(); mobile.position.set(-3.2, -1.8, 0); scene.add(mobile);
+  const humanoid = createHumanoid(); humanoid.position.set(-1.0, -1.8, 0); scene.add(humanoid);
+  const arm = createRoboticArm(); arm.position.set(1.2, -1.8, 0); scene.add(arm);
+  const llm = createLLMCore(); llm.position.set(3.4, -.6, 0); scene.add(llm);
+  
+  // New Vehicles
+  const kart = createGoKart(); kart.position.set(-1.5, -1.8, 2); scene.add(kart);
+  const baja = createBAJA(); baja.position.set(1.5, -1.8, 2); scene.add(baja);
+
+  function onResize() {
+    const wrap = canvas.parentElement;
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight, false);
+    camera.aspect = wrap.clientWidth / wrap.clientHeight;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+  onResize();
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += .01;
+    scene.rotation.y = Math.sin(t * .15) * .15;
+    mobile.rotation.y = t * .3;
+    humanoid.rotation.y = Math.sin(t * .4) * .15;
+    arm.rotation.y = Math.sin(t * .35) * .2;
+    llm.userData.ring1.rotation.y += .01;
+    llm.userData.ring2.rotation.x += .01;
+    llm.position.y = -.6 + Math.sin(t * .7) * .1;
+    
+    kart.rotation.y = t * 0.2;
+    baja.rotation.y = -t * 0.2;
+    
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+/* 2. TYPEWRITER EFFECT */
+(function pretextTypewriter() {
+  const taglines = ['Robotics · Reinforcement Learning · AI for Robotics', 'Biped Locomotion · Dual-Arm Manipulation', 'LLM/VLM · Autonomous Systems', 'Signal Temporal Logic · Motion Planning, ROS2, Nav2, MoveIt2, Git, Server, Docker'];
+  const el = document.querySelector('.hero-role');
+  if (!el) return;
+  let phraseIdx = 0, charIdx = 0, isDeleting = false;
+  function tick() {
+    const phrase = taglines[phraseIdx % taglines.length];
+    if (!isDeleting) {
+      el.textContent = phrase.slice(0, charIdx + 1); charIdx++;
+      if (charIdx === phrase.length) { isDeleting = true; setTimeout(tick, 2200); return; }
+    } else {
+      el.textContent = phrase.slice(0, charIdx - 1); charIdx--;
+      if (charIdx === 0) { isDeleting = false; phraseIdx++; setTimeout(tick, 400); return; }
+    }
+    setTimeout(tick, isDeleting ? 20 : 45);
+  }
+  tick();
+})();
+
+/* 3. SCROLL REVEAL */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+function handleSubmit(e) { e.preventDefault(); document.getElementById('form-success')?.classList.remove('hidden'); e.target.reset(); }
+</script>
+
+</body>
+</html>

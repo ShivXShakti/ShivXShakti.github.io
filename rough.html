@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+    PAGE TITLE
+    CHANGE: Update to your name / tagline.
+    This appears in the browser tab and search engine results.
+  ============================================================ -->
+  <title>Kuldeep Gurjar — Robotics & AI Researcher</title>
+
+  <!-- ============================================================
+    FONTS
+    Current fonts:
+      - "Space Grotesk"  → UI labels, nav, mono-style text
+      - "Playfair Display" → italic accent / serif display
+      - "JetBrains Mono"  → code-style tags and badges
+    CHANGE: Replace the Google Fonts URL if you want different fonts.
+    Pick from: fonts.google.com
+  ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- ============================================================
+    PRETEXT LIBRARY (text layout engine — loaded from CDN)
+    Pretext by Cheng Lou: https://github.com/chenglou/pretext
+    This powers the animated typewriter / text rendering effects.
+    Do NOT remove this script tag.
+  ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+
+    /* ============================================================
+      CSS CUSTOM PROPERTIES (Design Tokens)
+      ─────────────────────────────────────────────────────────────
+      Edit these variables to restyle the ENTIRE site instantly.
+
+      --bg-deep     : darkest background (body, hero)
+      --bg-mid      : slightly lighter panels
+      --bg-surface  : card/section surfaces
+      --ink         : primary text
+      --ink-dim     : secondary/muted text
+      --ink-ghost   : very subtle text / borders
+      --gold        : primary accent — headings, CTAs, highlights
+      --cyan        : secondary accent — badges, hover glows
+      --red-dim     : tertiary accent — subtle danger / contrast
+      --font-display: serif / italic display font
+      --font-ui     : sans-serif UI font
+      --font-mono   : monospaced code font
+    ============================================================ */
+    :root {
+      --bg-deep:     #060810;
+      --bg-mid:      #0b0e18;
+      --bg-surface:  #111520;
+      --bg-card:     #161b28;
+      --ink:         #e8eaf0;
+      --ink-dim:     #8b90a0;
+      --ink-ghost:   #2a2f42;
+      --gold:        #f0c060;
+      --gold-dim:    #a07830;
+      --cyan:        #40c8c0;
+      --cyan-dim:    #204844;
+      --red-dim:     #c04858;
+      --font-display:'Playfair Display', Georgia, serif;
+      --font-ui:     'Space Grotesk', sans-serif;
+      --font-mono:   'JetBrains Mono', monospace;
+      --max:         1140px;
+      --radius:      2px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--ink);
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── Scanline / noise grain overlay — atmospheric texture ─── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0,0,0,0.03) 2px,
+          rgba(0,0,0,0.03) 4px
+        );
+      opacity: .6;
+    }
+
+    /* ── Global utility classes ──────────────────────────────── */
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 2.5rem; }
+
+    /* Fade-in scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+
+    /* ── Section labels ──────────────────────────────────────── */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: .6rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .section-label::before {
+      content: '';
+      width: 28px; height: 1px;
+      background: var(--gold);
+      opacity: .7;
+    }
+
+    /* Section heading */
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 3.5rem;
+      letter-spacing: -.01em;
+    }
+    .section-heading em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    /* ============================================================
+      NAVIGATION BAR
+      CHANGE:
+        [ ] Replace "KG" with your own initials (--nav-logo)
+        [ ] Add or remove <li> items to change nav links
+        [ ] Update href values to match your section IDs
+    ============================================================ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 1.25rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: linear-gradient(to bottom, rgba(6,8,16,.96) 0%, transparent 100%);
+      backdrop-filter: blur(4px);
+      border-bottom: 1px solid rgba(240,192,96,.06);
+    }
+
+    /* CHANGE: Your initials logo */
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      color: var(--gold);
+      text-decoration: none;
+      border: 1px solid var(--gold-dim);
+      padding: .35rem .7rem;
+      transition: border-color .25s, color .25s;
+    }
+    .nav-logo:hover { border-color: var(--gold); }
+
+    .nav-links {
+      display: flex; gap: 2.25rem; list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: .68rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-dim);
+      text-decoration: none;
+      transition: color .2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width .3s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { width: 100%; }
+
+
+    /* ============================================================
+      HERO SECTION — 3D Robotics Visualization + Text
+      ─────────────────────────────────────────────────────────────
+      The Three.js canvas fills the right half.
+      The left side has your name, title, and stats.
+
+      CHANGE:
+        [ ] Your name in .hero-name (line ~340 in HTML)
+        [ ] Role label in .hero-role
+        [ ] Short pitch paragraph in .hero-desc
+        [ ] The 3 stat numbers in .stat-num
+        [ ] Stat labels in .stat-label
+      
+      3D scene robots: edit the buildScene() JS function below.
+      Colors: edit the robot material colors in createXxx() functions.
+    ============================================================ -->
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      overflow: hidden;
+      background: var(--bg-deep);
+    }
+
+    /* Vertical divider line */
+    .hero-divider {
+      position: absolute;
+      left: 50%; top: 10%; bottom: 10%;
+      width: 1px;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--ink-ghost) 30%,
+        var(--ink-ghost) 70%,
+        transparent
+      );
+    }
+
+    /* Decorative grid overlay on the entire hero */
+    .hero-grid-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(240,192,96,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(240,192,96,.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .hero-left {
+      padding: 8rem 3rem 4rem 2.5rem;
+      position: relative; z-index: 2;
+    }
+
+    /* CHANGE: small status tag above name */
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: .65rem; letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 1.5rem;
+      display: inline-flex; align-items: center; gap: .6rem;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.7); }
+    }
+
+    /* CHANGE: Your name — replace text in HTML */
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: -.02em;
+      margin-bottom: .5rem;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    /* CHANGE: Role line below your name */
+    .hero-role {
+      font-family: var(--font-mono);
+      font-size: .72rem; letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 2rem;
+      border-left: 2px solid var(--gold-dim);
+      padding-left: .9rem;
+    }
+
+    /* CHANGE: Short pitch / bio intro */
+    .hero-desc {
+      font-size: 1.05rem; color: var(--ink-dim);
+      max-width: 400px; line-height: 1.85;
+      margin-bottom: 2.5rem;
+    }
+
+    /* CTA button */
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: .75rem;
+      font-family: var(--font-mono);
+      font-size: .7rem; letter-spacing: .14em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: .85rem 1.75rem;
+      text-decoration: none;
+      transition: background .25s, color .25s, gap .3s;
+    }
+    .hero-cta:hover {
+      background: var(--gold);
+      color: var(--bg-deep);
+      gap: 1.2rem;
+    }
+
+    /* Stats row */
+    .hero-stats {
+      display: flex; gap: 2.5rem; margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--ink-ghost);
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.4rem; font-weight: 700;
+      color: var(--gold); line-height: 1;
+      margin-bottom: .2rem;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: .58rem; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--ink-ghost);
+    }
+
+    /* Three.js canvas container */
+    .hero-canvas-wrap {
+      position: relative; z-index: 1;
+      height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+    }
+    #robot-canvas {
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* Legend for 3D scene */
+    .scene-legend {
+      position: absolute; bottom: 2.5rem; right: 2.5rem;
+      display: flex; flex-direction: column; gap: .4rem;
+      z-index: 5;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: .5rem;
+      font-family: var(--font-mono);
+      font-size: .58rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-dim);
+    }
+    .legend-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+
+    /* Scroll indicator */
+    .hero-scroll {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: .4rem;
+      font-family: var(--font-mono); font-size: .58rem;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--ink-ghost);
+      z-index: 5;
+    }
+    .scroll-bar {
+      width: 1px; height: 36px;
+      background: linear-gradient(to bottom, var(--gold-dim), transparent);
+      animation: scrollAnim 2s ease-in-out infinite;
+    }
+    @keyframes scrollAnim {
+      0%   { transform: scaleY(0) translateY(0); transform-origin: top; }
+      50%  { transform: scaleY(1); transform-origin: top; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+
+    /* ============================================================
+      ABOUT SECTION
+      CHANGE:
+        [ ] Replace kd.jpg with your photo filename (same folder)
+        [ ] Edit the 3 bio paragraphs
+        [ ] Update skill tags to your actual stack
+      
+      HOW TO ADD YOUR PHOTO:
+        Place your photo file (e.g. photo.jpg) in the same folder
+        as index.html and replace "kd.jpg" in the <img> src below.
+    ============================================================ */
+    #about {
+      padding: 8rem 0;
+      background: var(--bg-mid);
+      position: relative;
+    }
+    #about::before {
+      content: 'ABOUT';
+      position: absolute; right: -1rem; top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: 14rem; font-weight: 700;
+      color: rgba(240,192,96,.025);
+      pointer-events: none; user-select: none;
+      letter-spacing: -.05em; line-height: 1;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 5rem; align-items: start;
+      position: relative; z-index: 1;
+    }
+
+    /* Photo frame */
+    .about-photo-wrap {
+      position: relative;
+    }
+    .about-photo-wrap::before {
+      content: '';
+      position: absolute;
+      top: 14px; left: 14px; right: -14px; bottom: -14px;
+      border: 1px solid var(--gold-dim);
+      opacity: .3; z-index: 0;
+    }
+    .about-photo-wrap img,
+    .about-photo-placeholder {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      position: relative; z-index: 1;
+      border: 1px solid var(--ink-ghost);
+    }
+    /* Placeholder shown when no photo is provided */
+    .about-photo-placeholder {
+      background: var(--bg-surface);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+      color: var(--ink-ghost);
+      font-family: var(--font-mono); font-size: .68rem;
+      letter-spacing: .1em;
+    }
+    .about-photo-placeholder span { font-size: 3rem; opacity: .2; }
+
+    /* Bio text column */
+    .about-text p {
+      color: var(--ink-dim);
+      font-size: 1.02rem; line-height: 1.9;
+      margin-bottom: 1.4rem;
+    }
+    .about-text p:first-child {
+      font-size: 1.2rem; color: var(--ink);
+      font-family: var(--font-display);
+      font-weight: 400; line-height: 1.6;
+    }
+
+    /* Skill tags */
+    .skills-grid {
+      display: flex; flex-wrap: wrap; gap: .4rem;
+      margin-top: 2rem;
+    }
+    .skill-tag {
+      font-family: var(--font-mono);
+      font-size: .62rem; letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      border: 1px solid var(--ink-ghost);
+      padding: .28rem .65rem;
+      transition: border-color .2s, color .2s;
+    }
+    .skill-tag:hover { border-color: var(--cyan); color: var(--cyan); }
+
+
+    /* ============================================================
+      PROJECTS SECTION
+      CHANGE:
+        [ ] To add a project: copy any .project-card block
+        [ ] To remove a project: delete the .project-card block
+        [ ] Update project-num, title, desc, tags, and link
+        [ ] To add future project slots: copy the template cards
+            marked with <!-- TEMPLATE PROJECT -->
+    ============================================================ -->
+    #projects {
+      padding: 8rem 0;
+      background: var(--bg-deep);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* Featured/large card — first project spans full width */
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--ink-ghost);
+      padding: 2.25rem;
+      position: relative; overflow: hidden;
+      transition: border-color .3s, transform .3s;
+      cursor: default;
+    }
+    .project-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-3px);
+    }
+    /* Bottom accent bar on hover */
+    .project-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--cyan));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .4s;
+    }
+    .project-card:hover::after { transform: scaleX(1); }
+
+    /* Make first card (Dual-Arm) span full width */
+    .project-card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .project-card.featured .project-body { /* right column of featured card */ }
+
+    .project-num {
+      font-family: var(--font-mono);
+      font-size: .6rem; letter-spacing: .12em;
+      color: var(--ink-ghost); margin-bottom: 1.2rem;
+    }
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.65rem; font-weight: 400;
+      line-height: 1.2; margin-bottom: .7rem;
+    }
+    .project-card.featured .project-title { font-size: 2.2rem; }
+
+    .project-desc {
+      font-size: .9rem; color: var(--ink-dim);
+      line-height: 1.8; margin-bottom: 1.5rem;
+    }
+    .project-tags {
+      display: flex; flex-wrap: wrap; gap: .35rem;
+      margin-bottom: 1.25rem;
+    }
+    .project-tag {
+      font-family: var(--font-mono);
+      font-size: .58rem; letter-spacing: .09em;
+      text-transform: uppercase;
+      background: var(--bg-surface);
+      color: var(--ink-ghost); padding: .2rem .55rem;
+      border: 1px solid var(--ink-ghost);
+    }
+    .project-link {
+      font-family: var(--font-mono); font-size: .65rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      display: inline-flex; align-items: center; gap: .5rem;
+      transition: gap .25s;
+    }
+    .project-link:hover { gap: .9rem; }
+
+    /* Status badge on featured project */
+    .project-status {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: .58rem; letter-spacing: .14em;
+      text-transform: uppercase;
+      border: 1px solid var(--cyan);
+      color: var(--cyan); padding: .25rem .65rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Dual arm visual placeholder — replace with your screenshot/gif */
+    .project-visual {
+      background: var(--bg-surface);
+      border: 1px solid var(--ink-ghost);
+      aspect-ratio: 16/10;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .project-visual-label {
+      font-family: var(--font-mono);
+      font-size: .62rem; letter-spacing: .1em;
+      color: var(--ink-ghost);
+      text-align: center; padding: 1rem;
+    }
+    /* Animated scan line on visual placeholder */
+    .project-visual::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      animation: scan 2.5s linear infinite;
+      opacity: .4;
+    }
+    @keyframes scan {
+      0%   { top: 0%; }
+      100% { top: 100%; }
+    }
+
+    /* Template card styling */
+    .project-card.template {
+      border-style: dashed;
+      border-color: var(--ink-ghost);
+      opacity: .55;
+    }
+    .project-card.template:hover {
+      opacity: .8;
+      border-color: var(--gold-dim);
+    }
+    .template-hint {
+      font-family: var(--font-mono);
+      font-size: .65rem; letter-spacing: .1em;
+      color: var(--ink-ghost);
+      text-align: center; padding: 2rem 1rem;
+    }
+
+
+    /* ============================================================
+      RESEARCH SECTION
+      CHANGE:
+        [ ] Each research-item: year, title, venue, abstract, badge
+        [ ] Badge text options: Published | Preprint | In Review
+                                Best Paper Nom. | Thesis
+        [ ] To add: copy any research-item block
+        [ ] To remove: delete the research-item block
+    ============================================================ -->
+    #research {
+      padding: 8rem 0;
+      background: var(--bg-mid);
+    }
+
+    .research-list { display: flex; flex-direction: column; }
+
+    .research-item {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      gap: 2rem; align-items: start;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--ink-ghost);
+      transition: padding-left .3s;
+    }
+    .research-item:first-child { border-top: 1px solid var(--ink-ghost); }
+    .research-item:hover { padding-left: .75rem; }
+
+    .research-year {
+      font-family: var(--font-mono);
+      font-size: .65rem; color: var(--ink-ghost);
+      letter-spacing: .08em; padding-top: .2rem;
+    }
+    .research-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 400; margin-bottom: .35rem;
+      line-height: 1.35;
+    }
+    .research-venue {
+      font-family: var(--font-mono); font-size: .65rem;
+      color: var(--cyan); letter-spacing: .07em; margin-bottom: .5rem;
+    }
+    .research-abstract {
+      font-size: .875rem; color: var(--ink-dim); line-height: 1.75;
+    }
+    .research-badge {
+      font-family: var(--font-mono); font-size: .55rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      border: 1px solid var(--gold-dim); color: var(--gold);
+      padding: .22rem .55rem; white-space: nowrap;
+      height: fit-content; margin-top: .3rem;
+    }
+    .research-badge.in-review { border-color: var(--cyan-dim); color: var(--ink-dim); }
+    .research-badge.best-paper { border-color: var(--gold); color: var(--gold); }
+
+
+    /* ============================================================
+      THINGS I LOVE SECTION  (Hobbies / Interests)
+      CHANGE:
+        [ ] Replace hobby-card blocks with your actual interests
+        [ ] Change the emoji icon, name, and description
+        [ ] The TEMPLATE cards are placeholders — fill them in later
+        [ ] First card always spans full width (use for main hobby)
+    ============================================================ -->
+    #loves {
+      padding: 8rem 0;
+      background: var(--bg-deep);
+    }
+
+    .loves-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .love-card {
+      background: var(--bg-card);
+      border: 1px solid var(--ink-ghost);
+      padding: 2.5rem;
+      position: relative; overflow: hidden;
+      transition: border-color .3s;
+    }
+    .love-card:hover { border-color: var(--ink-ghost); }
+
+    /* First card spans full width */
+    .love-card:first-child { grid-column: 1 / -1; }
+
+    /* Glowing corner accent on hover */
+    .love-card::before {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle at top right, var(--gold) 0%, transparent 70%);
+      opacity: 0; transition: opacity .4s;
+    }
+    .love-card:hover::before { opacity: .04; }
+
+    .love-icon {
+      font-size: 2rem; margin-bottom: 1rem; display: block;
+    }
+    .love-name {
+      font-family: var(--font-ui);
+      font-size: 1rem; font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+    .love-desc {
+      font-size: .9rem; color: var(--ink-dim); line-height: 1.8;
+    }
+
+    /* Template card */
+    .love-card.template {
+      border-style: dashed; opacity: .45;
+    }
+    .love-card.template:hover { opacity: .7; border-color: var(--gold-dim); }
+
+
+    /* ============================================================
+      BLOG SECTION
+      CHANGE:
+        [ ] Update each blog-card with your real post URL, date,
+            title, and excerpt
+        [ ] The featured card (first) is larger — use for best post
+        [ ] If you have no blog yet: delete the entire #blog section
+            and remove the nav link for "Blog"
+        [ ] TEMPLATE cards are placeholders — fill in later
+    ============================================================ -->
+    #blog {
+      padding: 8rem 0;
+      background: var(--bg-mid);
+    }
+
+    .blog-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .blog-card {
+      background: var(--bg-card);
+      border: 1px solid var(--ink-ghost);
+      padding: 2rem;
+      text-decoration: none; color: inherit;
+      display: block;
+      transition: border-color .3s, transform .3s;
+    }
+    .blog-card:hover { border-color: var(--gold-dim); transform: translateY(-3px); }
+    .blog-card.featured {
+      grid-row: span 2;
+      background: var(--bg-surface);
+    }
+
+    .blog-date {
+      font-family: var(--font-mono); font-size: .6rem;
+      color: var(--ink-ghost); letter-spacing: .1em;
+      text-transform: uppercase; margin-bottom: .9rem;
+    }
+    .blog-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem; font-weight: 400;
+      line-height: 1.25; margin-bottom: .75rem;
+      color: var(--ink);
+    }
+    .blog-card.featured .blog-title { font-size: 2rem; margin-bottom: 1.1rem; }
+    .blog-excerpt { font-size: .88rem; color: var(--ink-dim); line-height: 1.75; }
+    .blog-read {
+      margin-top: 1.25rem;
+      font-family: var(--font-mono); font-size: .62rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold);
+      display: inline-flex; align-items: center; gap: .5rem;
+    }
+
+    /* Template blog card */
+    .blog-card.template {
+      border-style: dashed; opacity: .45;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .blog-card.template:hover { opacity: .7; }
+
+
+    /* ============================================================
+      CONTACT SECTION
+      CHANGE:
+        [ ] Update mailto: href with your real email
+        [ ] Update Google Scholar, GitHub, LinkedIn URLs
+        [ ] To enable real email sending: see Formspree instructions
+            in the HTML comment near the <form> tag below
+    ============================================================ -->
+    #contact {
+      padding: 8rem 0;
+      background: var(--bg-deep);
+      position: relative; overflow: hidden;
+    }
+    #contact::before {
+      content: 'CONNECT';
+      position: absolute; bottom: -3rem; right: -2rem;
+      font-family: var(--font-display);
+      font-size: 13rem; font-weight: 700;
+      color: rgba(240,192,96,.02);
+      pointer-events: none; user-select: none;
+      letter-spacing: -.04em; line-height: 1;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: start;
+      position: relative; z-index: 1;
+    }
+
+    .contact-intro {
+      font-size: 1.05rem; color: var(--ink-dim);
+      line-height: 1.85; margin-bottom: 2.5rem;
+    }
+
+    .contact-links { display: flex; flex-direction: column; gap: .9rem; }
+
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem;
+      text-decoration: none; color: var(--ink-dim);
+      font-family: var(--font-mono); font-size: .75rem; letter-spacing: .07em;
+      transition: color .2s;
+      padding-bottom: .9rem;
+      border-bottom: 1px solid var(--ink-ghost);
+    }
+    .contact-link:hover { color: var(--gold); }
+
+    .contact-link-icon {
+      width: 34px; height: 34px;
+      border: 1px solid var(--ink-ghost);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem;
+      transition: border-color .2s;
+    }
+    .contact-link:hover .contact-link-icon { border-color: var(--gold); }
+
+    /* Contact form */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-field { display: flex; flex-direction: column; gap: .4rem; }
+    .form-label {
+      font-family: var(--font-mono); font-size: .6rem;
+      letter-spacing: .16em; text-transform: uppercase; color: var(--ink-ghost);
+    }
+    .form-input, .form-textarea {
+      background: var(--bg-surface);
+      border: 1px solid var(--ink-ghost);
+      color: var(--ink);
+      font-family: var(--font-ui); font-size: .95rem;
+      padding: .7rem 1rem;
+      outline: none; resize: none;
+      transition: border-color .2s;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--gold-dim); }
+    .form-textarea { height: 110px; }
+
+    .form-btn {
+      align-self: flex-start;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--font-mono); font-size: .68rem;
+      letter-spacing: .14em; text-transform: uppercase;
+      padding: .85rem 1.8rem; cursor: pointer;
+      transition: background .25s, color .25s;
+    }
+    .form-btn:hover { background: var(--gold); color: var(--bg-deep); }
+
+    .form-success {
+      display: none;
+      font-family: var(--font-mono); font-size: .75rem;
+      letter-spacing: .1em; color: var(--cyan);
+      border: 1px solid var(--cyan-dim);
+      padding: 1rem 1.5rem; margin-top: 1rem;
+    }
+
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    /* CHANGE: Replace "Kuldeep Gurjar" and update the year */
+    footer {
+      padding: 2rem 2.5rem;
+      border-top: 1px solid var(--ink-ghost);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg-deep);
+    }
+    .footer-copy {
+      font-family: var(--font-mono); font-size: .6rem;
+      letter-spacing: .08em; color: var(--ink-ghost);
+    }
+    .footer-back {
+      font-family: var(--font-mono); font-size: .6rem;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-ghost); text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-back:hover { color: var(--gold); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 960px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.5rem; }
+
+      #hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 7rem 1.5rem 2rem; }
+      .hero-canvas-wrap { height: 60vw; }
+      .hero-divider { display: none; }
+
+      .about-grid { grid-template-columns: 1fr; }
+      .about-photo-wrap { max-width: 260px; }
+
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-template-columns: 1fr; }
+
+      .loves-grid { grid-template-columns: 1fr; }
+      .love-card:first-child { grid-column: auto; }
+
+      .blog-grid { grid-template-columns: 1fr; }
+      .blog-card.featured { grid-row: auto; }
+
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+
+      .container { padding: 0 1.5rem; }
+    }
+
+  </style>
+</head>
+<body>
+
+
+<!-- ============================================================
+  NAVIGATION BAR
+  CHANGE:
+    [ ] "KG" → your initials (nav-logo)
+    [ ] Add / remove nav links to match your sections
+    [ ] Update href="#sectionid" to match section id attributes
+============================================================ -->
+<nav>
+  <!-- CHANGE: Replace "KG" with your initials -->
+  <a href="#hero" class="nav-logo">KG</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#loves">Interests</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+
+<!-- ============================================================
+  HERO SECTION
+  Left side: text / name / stats
+  Right side: Three.js 3D robotics scene
+
+  CHANGE (left column):
+    [ ] .hero-tag text — your current role / position
+    [ ] .hero-name — your first and last name
+    [ ] .hero-role — your title / department
+    [ ] .hero-desc — 1–2 sentence personal pitch
+    [ ] Each .stat-num and .stat-label
+
+  CHANGE (3D scene — see JS section at bottom):
+    [ ] Robot colors: find createMobilePlatform(), createHumanoid(),
+        createRoboticArm(), createLLMCore() in the script and
+        edit the THREE.MeshStandardMaterial color values
+    [ ] To remove a robot: comment out the addToScene() call for it
+    [ ] Lighting: find the three PointLight calls and edit position/color
+============================================================ -->
+<section id="hero">
+
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-divider"></div>
+
+  <!-- LEFT: Text content -->
+  <div class="hero-left">
+
+    <!-- CHANGE: Your current position / institution -->
+    <div class="hero-tag">Data Scientist · DRDO, Pune</div>
+
+    <!-- CHANGE: Your first name and last name -->
+    <h1 class="hero-name">Kuldeep<br><em>Gurjar</em></h1>
+
+    <!-- CHANGE: Your title / role summary -->
+    <p class="hero-role">Robotics · Reinforcement Learning · AI for Robotics/p>
+
+    <!-- CHANGE: 1–2 sentence personal pitch -->
+    <p class="hero-desc">
+      Building intelligent robotic systems — from biped locomotion and dual-arm manipulation
+      to LLM-driven autonomy. Working at DRDO on next-generation defence robots.
+    </p>
+
+    <a href="#about" class="hero-cta">Explore my work <span>→</span></a>
+
+    <!-- CHANGE: Update the 3 stat numbers and their labels -->
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">4+</div>         <!-- CHANGE: Years of experience -->
+        <div class="stat-label">Years exp.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>           <!-- CHANGE: Number of papers -->
+        <div class="stat-label">Publications</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">10+</div>         <!-- CHANGE: Number of projects -->
+        <div class="stat-label">Projects</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Three.js 3D scene — robots + LLM orb -->
+  <div class="hero-canvas-wrap">
+    <canvas id="robot-canvas"></canvas>
+
+    <!-- Legend — matches robot colors in the JS scene -->
+    <!-- CHANGE: Update labels if you change what robots are shown -->
+    <div class="scene-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#40c8c0"></div>Mobile Robot
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#f0c060"></div>Humanoid
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#c04858"></div>Robotic Arm
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#8860f0"></div>LLM / VLM Core
+      </div>
+    </div>
+  </div>
+
+  <!-- Animated scroll hint -->
+  <div class="hero-scroll">
+    <div class="scroll-bar"></div>
+    scroll
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+  ABOUT SECTION
+  CHANGE:
+    [ ] Replace "kd.jpg" with your photo filename (same folder)
+    [ ] Rewrite the 3 bio paragraphs in your own voice
+    [ ] Update skill tags — add / remove / rename as needed
+
+  HOW TO ADD YOUR PHOTO:
+    1. Place your image (e.g. photo.jpg) next to index.html
+    2. Change src="kd.jpg" to src="photo.jpg" (or your filename)
+    3. The image will auto-fit the 3:4 portrait box
+
+  HOW TO ADD A SKILL TAG:
+    Copy:  <span class="skill-tag">New Skill</span>
+    Paste it inside .skills-grid
+============================================================ -->
+<section id="about">
+  <div class="container">
+    <div class="section-label">About me</div>
+    <h2 class="section-heading reveal">Who I <em>am</em></h2>
+
+    <div class="about-grid">
+
+      <!-- LEFT: Your photo -->
+      <!-- CHANGE: Replace src="kd.jpg" with your actual photo filename -->
+      <div class="about-photo-wrap reveal">
+        <img
+          src="kd.jpg"
+          alt="Kuldeep Gurjar"
+          style="width:100%; aspect-ratio:3/4; object-fit:cover; display:block; position:relative; z-index:1;"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+        <!-- This placeholder shows only if the image fails to load -->
+        <div class="about-photo-placeholder" style="display:none;">
+          <span>👤</span>
+          photo.jpg
+        </div>
+      </div>
+
+      <!-- RIGHT: Bio text -->
+      <div class="about-text reveal reveal-delay-1">
+
+        <!-- CHANGE: Opening sentence — your name + specialty -->
+        <p>
+          Hi, I'm <strong>Kuldeep Gurjar</strong> — a robotics engineer and AI researcher
+          specialising in reinforcement learning, motion planning, and intelligent autonomous systems.
+        </p>
+
+        <!-- CHANGE: Current role and institution paragraph -->
+        <p>
+          Currently a Data Scientist (RDE Engineer) at DRDO, Pune, working on biped locomotion,
+          dual-arm manipulation, and LLM/VLM integration for defence robots. Previously a Senior
+          Research Fellow at DIAT and Research Intern at IISc Bangalore's Robert Bosch Centre.
+        </p>
+
+        <!-- CHANGE: Technical depth / education paragraph -->
+        <p>
+          My work spans the full stack — from formal methods like Signal Temporal Logic to hands-on
+          hardware on Nvidia Jetson AGX Orin, UR10 manipulators, and DRDO's BRS1 biped.
+          M.Tech in Automation &amp; Robotics from DIAT, Pune.
+        </p>
+
+        <!-- CHANGE: Add, remove, or rename skill tags freely -->
+        <div class="skills-grid">
+          <span class="skill-tag">ROS1 &amp; ROS2</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">Reinforcement Learning</span>
+          <span class="skill-tag">Deep Learning</span>
+          <span class="skill-tag">PyTorch</span>
+          <span class="skill-tag">TensorFlow</span>
+          <span class="skill-tag">Computer Vision</span>
+          <span class="skill-tag">LLM &amp; VLM</span>
+          <span class="skill-tag">Gazebo / MuJoCo</span>
+          <span class="skill-tag">Isaac Sim</span>
+          <span class="skill-tag">MoveIt</span>
+          <span class="skill-tag">Path Planning</span>
+          <span class="skill-tag">Signal Temporal Logic</span>
+          <span class="skill-tag">FMCW Radar</span>
+          <span class="skill-tag">EEG Processing</span>
+          <!-- TEMPLATE: Add more skill tags here -->
+          <!-- <span class="skill-tag">Your New Skill</span> -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  PROJECTS SECTION
+  Currently shows: Dual-Arm project (full width featured)
+                   + 2 template slots for future projects.
+
+  TO ADD A PROJECT:
+    Copy a .project-card block, remove class "template",
+    and fill in your real content.
+
+  TO FILL THE DUAL-ARM CARD:
+    [ ] Update .project-desc with more detail
+    [ ] Replace .project-visual placeholder with a real screenshot:
+        <img src="dualarm.jpg" style="width:100%;height:100%;object-fit:cover;" />
+    [ ] Replace href="#" on .project-link with your real URL
+        (GitHub repo / paper / demo video)
+
+  FIELDS PER CARD:
+    project-num    → "01", "02", etc.
+    project-title  → name of the project
+    project-desc   → 2–3 sentence description
+    project-tags   → tech stack badges
+    project-link   → href and link text
+============================================================ -->
+<section id="projects">
+  <div class="container">
+    <div class="section-label">Work</div>
+    <h2 class="section-heading reveal">Selected <em>projects</em></h2>
+
+    <div class="projects-grid reveal">
+
+      <!-- ═══════════════════════════════════════════════════════
+        FEATURED PROJECT: Dual-Arm Motion Planning (full width)
+        CHANGE: Fill in all the fields below.
+      ═══════════════════════════════════════════════════════ -->
+      <div class="project-card featured">
+
+        <!-- Left column: text info -->
+        <div class="project-info">
+          <div class="project-num">01</div>
+
+          <!-- CHANGE: Project status badge (Active / Completed / In Progress) -->
+          <div class="project-status">Active — DRDO</div>
+
+          <!-- CHANGE: Project title -->
+          <h3 class="project-title">Dual-Arm Motion Planning</h3>
+
+          <!-- CHANGE: 2–3 sentence description of what you built and why -->
+          <p class="project-desc">
+            Dual-arm upper body robotic system deployed at DRDO, Pune using the UR10 manipulator.
+            Implements admittance control for compliant human–robot interaction, coordinated
+            bimanual manipulation, and LLM-driven task understanding via ROS2 and MoveIt2.
+            Designed for defence scenarios requiring dexterous manipulation in unstructured environments.
+          </p>
+
+          <!-- CHANGE: Tech stack tags — add or remove as needed -->
+          <div class="project-tags">
+            <span class="project-tag">MoveIt2</span>
+            <span class="project-tag">ROS2</span>
+            <span class="project-tag">Admittance Control</span>
+            <span class="project-tag">C++</span>
+            <span class="project-tag">UR10</span>
+            <span class="project-tag">LLM Integration</span>
+            <span class="project-tag">Isaac Sim</span>
+          </div>
+
+          <!-- CHANGE: Replace href="#" with your actual link (GitHub / paper / demo) -->
+          <a href="#" class="project-link">View on GitHub →</a>
+
+        </div>
+
+        <!-- Right column: visual — replace with screenshot or gif -->
+        <!-- CHANGE: Replace the placeholder below with:
+             <img src="dualarm-screenshot.jpg" style="width:100%;height:100%;object-fit:cover;" />
+             OR an <iframe> embed for a YouTube demo, etc.
+        -->
+        <div class="project-visual">
+          <div class="project-visual-label">
+            [ Replace with screenshot or demo GIF ]<br>
+            &lt;img src="dualarm.jpg" /&gt;
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- ═══════════════════════════════════════════════════════
+        TEMPLATE PROJECT SLOT 2
+        CHANGE: Remove class "template", fill in your content.
+        Copy this block for additional projects.
+      ═══════════════════════════════════════════════════════ -->
+      <div class="project-card template">
+        <div class="project-num">02</div>
+        <div class="template-hint">
+          <!-- CHANGE: Replace everything in this card with your project -->
+          [ Future project — fill in title, description, tags, and link ]<br><br>
+          Remove class="template" from the .project-card div when ready.
+        </div>
+        <!--
+          TEMPLATE STRUCTURE — uncomment and fill in:
+          <h3 class="project-title">Your Project Title</h3>
+          <p class="project-desc">Your project description here.</p>
+          <div class="project-tags">
+            <span class="project-tag">Tag1</span>
+            <span class="project-tag">Tag2</span>
+          </div>
+          <a href="#" class="project-link">View project →</a>
+        -->
+      </div>
+
+
+      <!-- ═══════════════════════════════════════════════════════
+        TEMPLATE PROJECT SLOT 3
+        CHANGE: Same as above — fill in when you have more projects.
+      ═══════════════════════════════════════════════════════ -->
+      <div class="project-card template">
+        <div class="project-num">03</div>
+        <div class="template-hint">
+          [ Future project — fill in title, description, tags, and link ]<br><br>
+          Remove class="template" from the .project-card div when ready.
+        </div>
+        <!--
+          TEMPLATE STRUCTURE — uncomment and fill in:
+          <h3 class="project-title">Your Project Title</h3>
+          <p class="project-desc">Your project description here.</p>
+          <div class="project-tags">
+            <span class="project-tag">Tag1</span>
+            <span class="project-tag">Tag2</span>
+          </div>
+          <a href="#" class="project-link">View project →</a>
+        -->
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  RESEARCH / PUBLICATIONS SECTION
+  CHANGE:
+    [ ] Each research-item: year, title, venue, abstract, badge
+    [ ] Badge classes: (none) = gold/published, .in-review = grey,
+                       .best-paper = bright gold
+    [ ] To ADD a paper: copy any research-item block
+    [ ] To REMOVE: delete the research-item block
+    [ ] Add DOI link by wrapping .research-title in an <a> tag
+
+  HOW TO ADD A PAPER LINK:
+    Replace <div class="research-title">Title</div>
+    with:   <a href="https://doi.org/..." class="research-title"
+                style="color:inherit;text-decoration:none;">Title</a>
+============================================================ -->
+<section id="research">
+  <div class="container">
+    <div class="section-label">Academia</div>
+    <h2 class="section-heading reveal">Research &amp; <em>publications</em></h2>
+
+    <div class="research-list">
+
+      <!-- PAPER 1 ─────────────────────────────────────────────
+        CHANGE: Year, title, venue, abstract text, badge text
+      ────────────────────────────────────────────────────── -->
+      <div class="research-item reveal">
+        <div class="research-year">2024</div>   <!-- CHANGE: Publication year -->
+        <div>
+          <!-- CHANGE: Full paper title -->
+          <div class="research-title">
+            Classifying EEG-based Upper Limb Motor Imagery Tasks for Brain-Robot Interface-based System Development
+          </div>
+          <!-- CHANGE: Conference / journal name and location -->
+          <div class="research-venue">ICARM 2024 · International Conference on Advanced Robotics and Mechatronics, Tokyo, Japan</div>
+          <!-- CHANGE: 1–2 sentence summary -->
+          <div class="research-abstract">
+            Novel ratio of band power (RBP) features for classifying upper-limb motor imagery tasks from EEG,
+            enabling reliable brain-robot interface control. Nominated for best conference paper.
+          </div>
+        </div>
+        <!-- CHANGE: Badge text — "Published" | "Preprint" | "In Review" | "Best Paper Nom." -->
+        <div class="research-badge best-paper">Best Paper Nom.</div>
+      </div>
+
+      <!-- PAPER 2 ──────────────────────────────────────────── -->
+      <div class="research-item reveal reveal-delay-1">
+        <div class="research-year">2024</div>
+        <div>
+          <div class="research-title">ResNet50-based Automated Method for Monocular Depth Estimation using Video</div>
+          <div class="research-venue">IEEE CONECCT 2024 · Electronics, Computing and Communication Technologies, Bangalore</div>
+          <div class="research-abstract">
+            A ResNet50-based pipeline for monocular depth estimation from video, providing accurate
+            scene depth without stereo hardware.
+          </div>
+        </div>
+        <div class="research-badge">Published</div>
+      </div>
+
+      <!-- PAPER 3 ──────────────────────────────────────────── -->
+      <div class="research-item reveal reveal-delay-2">
+        <div class="research-year">2024</div>
+        <div>
+          <div class="research-title">Advanced Wavelet Transform-Based Automated System for Drone State Identification Using Radio-Frequency Signal</div>
+          <div class="research-venue">Journal of Aerospace Information Systems (JAIS), Vol. 21, No. 11</div>
+          <div class="research-abstract">
+            Wavelet-based classification of drone operational states from RF signals across diverse
+            backgrounds using a Random Forest classifier.
+          </div>
+        </div>
+        <div class="research-badge">Published</div>
+      </div>
+
+      <!-- PAPER 4 ──────────────────────────────────────────── -->
+      <div class="research-item reveal reveal-delay-3">
+        <div class="research-year">2024</div>
+        <div>
+          <div class="research-title">Non-Invasive Age and Gender Classification of Children Using Radar-Based Vital Sign Analysis</div>
+          <div class="research-venue">Internet of Things and Cyber-Physical Systems (Under Review)</div>
+          <div class="research-abstract">
+            IWR radar-based vital sign data with machine learning for non-invasive contact-free
+            paediatric monitoring of age and gender classification.
+          </div>
+        </div>
+        <div class="research-badge in-review">In Review</div>
+      </div>
+
+      <!-- TEMPLATE PAPER — Add future papers here ──────────
+        CHANGE: Uncomment and fill in when you have a new paper.
+      ──────────────────────────────────────────────────────
+      <div class="research-item reveal">
+        <div class="research-year">2025</div>
+        <div>
+          <div class="research-title">Your New Paper Title</div>
+          <div class="research-venue">Conference / Journal Name · Location</div>
+          <div class="research-abstract">Short abstract summary here.</div>
+        </div>
+        <div class="research-badge">Published</div>
+      </div>
+      -->
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  THINGS I LOVE SECTION
+  Currently shows your actual hobbies + template slots.
+
+  CHANGE:
+    [ ] Update each love-card: emoji icon, name, description
+    [ ] Template cards (class="template") → remove "template"
+        class and fill in your real content when ready
+    [ ] First card is always full-width — use it for your main hobby
+
+  HOW TO ADD A HOBBY:
+    Copy:
+      <div class="love-card">
+        <span class="love-icon">🎸</span>
+        <div class="love-name">Guitar</div>
+        <p class="love-desc">Description here.</p>
+      </div>
+    Paste inside .loves-grid
+============================================================ -->
+<section id="loves">
+  <div class="container">
+    <div class="section-label">Beyond work</div>
+    <h2 class="section-heading reveal">Things I <em>love</em></h2>
+
+    <div class="loves-grid reveal">
+
+      <!-- HOBBY 1 — full-width, your main passion ─────────────
+        CHANGE: Update icon, name, and description.
+      ──────────────────────────────────────────────────────── -->
+      <div class="love-card">
+        <span class="love-icon">🏎️</span>
+        <!-- CHANGE: Hobby name -->
+        <div class="love-name">Go-Kart Racing &amp; Engineering</div>
+        <!-- CHANGE: Description — 2–4 sentences about this hobby -->
+        <p class="love-desc">
+          Competed in national and international go-kart championships — building both IC-engine
+          and electric karts from scratch with Team Scavengers and Team Advait at MITS Gwalior.
+          Won the best presentation award at the e-NKRC. Racing taught me that engineering
+          under pressure is where theory meets reality.
+        </p>
+      </div>
+
+      <!-- HOBBY 2 ──────────────────────────────────────────── -->
+      <div class="love-card">
+        <span class="love-icon">🤖</span>
+        <div class="love-name">Robotics Teaching</div>
+        <p class="love-desc">
+          Delivered hands-on ROS2 tutorials at DIAT's School of Robotics for postgraduate students,
+          covering robot dynamics, kinematics, and Turtlebot3 hardware sessions.
+        </p>
+      </div>
+
+      <!-- HOBBY 3 ──────────────────────────────────────────── -->
+      <div class="love-card">
+        <span class="love-icon">📖</span>
+        <div class="love-name">Reading &amp; Research</div>
+        <p class="love-desc">
+          Deep-diving into papers on RL, formal methods, and neuroscience.
+          The boundary between robotics and biology is where the most interesting problems live.
+        </p>
+      </div>
+
+      <!-- HOBBY 4 ──────────────────────────────────────────── -->
+      <div class="love-card">
+        <span class="love-icon">🔬</span>
+        <div class="love-name">Electronics &amp; Embedded Systems</div>
+        <p class="love-desc">
+          Tinkering with Raspberry Pi, Arduino, and Jetson platforms.
+          From PLC training in Pune to embedded C — hardware hacking keeps software thinking grounded.
+        </p>
+      </div>
+
+      <!-- TEMPLATE HOBBY 5 — fill in later ────────────────────
+        CHANGE: Remove class="template" and fill in content.
+      ──────────────────────────────────────────────────────── -->
+      <div class="love-card template">
+        <span class="love-icon">✦</span>
+        <div class="love-name">[ Your Hobby Here ]</div>
+        <p class="love-desc">
+          Describe this hobby in 2–3 sentences. Replace the emoji icon above,
+          the name, and this text. Remove class="template" when done.
+        </p>
+      </div>
+
+      <!-- TEMPLATE HOBBY 6 ────────────────────────────────────
+        CHANGE: Same as above.
+      ──────────────────────────────────────────────────────── -->
+      <div class="love-card template">
+        <span class="love-icon">✦</span>
+        <div class="love-name">[ Your Hobby Here ]</div>
+        <p class="love-desc">
+          Describe this hobby in 2–3 sentences. Replace the emoji icon,
+          name, and this text. Remove class="template" when done.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  BLOG SECTION
+  CHANGE:
+    [ ] Each blog-card: update href, date, title, excerpt
+    [ ] The FEATURED card (first) is large — use for best post
+    [ ] Template cards: remove class="template", add content
+    [ ] If you have no blog yet: delete this entire section and
+        remove <li><a href="#blog">Blog</a></li> from the nav
+
+  HOW TO LINK A REAL POST:
+    Change href="#" to your actual blog post URL.
+    e.g. href="https://medium.com/@yourhandle/post-slug"
+============================================================ -->
+<section id="blog">
+  <div class="container">
+    <div class="section-label">Writing</div>
+    <h2 class="section-heading reveal">From the <em>blog</em></h2>
+
+    <div class="blog-grid reveal">
+
+      <!-- FEATURED POST — tall card, 2 rows ────────────────────
+        CHANGE: href → real URL, date, title, excerpt
+      ──────────────────────────────────────────────────────── -->
+      <a href="#" class="blog-card featured">
+        <!-- CHANGE: Year or "Month Year" of post -->
+        <div class="blog-date">2024</div>
+        <!-- CHANGE: Post title -->
+        <div class="blog-title">
+          Why I stopped fighting ROS and started appreciating its philosophy
+        </div>
+        <!-- CHANGE: 2–3 sentence excerpt -->
+        <p class="blog-excerpt">
+          After years in ROS1 and ROS2 across mobile robots, manipulators, and bipeds,
+          I finally understood that the framework's verbosity isn't friction — it's encoding
+          decades of hard-won lessons about distributed robotics systems.
+        </p>
+        <div class="blog-read">Read essay →</div>
+      </a>
+
+      <!-- POST 2 ───────────────────────────────────────────── -->
+      <a href="#" class="blog-card">
+        <div class="blog-date">2024</div>
+        <div class="blog-title">Sim-to-real with bipeds: what actually breaks</div>
+        <p class="blog-excerpt">A practical account of the gap between Isaac Sim and DRDO's BRS1 hardware.</p>
+        <div class="blog-read">Read →</div>
+      </a>
+
+      <!-- POST 3 ───────────────────────────────────────────── -->
+      <a href="#" class="blog-card">
+        <div class="blog-date">2023</div>
+        <div class="blog-title">Signal Temporal Logic as a reward shaping tool</div>
+        <p class="blog-excerpt">How formal task specifications can improve RL policy robustness.</p>
+        <div class="blog-read">Read →</div>
+      </a>
+
+      <!-- TEMPLATE POST — fill in when you have more posts ────
+        CHANGE: Remove class="template", add href and real content.
+      ──────────────────────────────────────────────────────── -->
+      <a href="#" class="blog-card template">
+        <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--ink-ghost);letter-spacing:.1em;text-align:center;padding:1rem;">
+          [ Future blog post — fill in date, title, excerpt, and link ]<br>
+          Remove class="template" when ready.
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  CONTACT SECTION
+  CHANGE:
+    [ ] .contact-intro paragraph text
+    [ ] mailto: — update to your real email address
+    [ ] Google Scholar, GitHub, LinkedIn URLs and text
+    [ ] Form: to enable real email sending (no backend):
+        1. Sign up at https://formspree.io (free: 50/month)
+        2. Create a form, copy your endpoint URL
+        3. Replace the <form onsubmit="..."> opening tag with:
+           <form class="contact-form" action="https://formspree.io/f/YOURCODE" method="POST">
+        4. Delete the handleSubmit() function in the JS below
+============================================================ -->
+<section id="contact">
+  <div class="container">
+    <div class="section-label">Get in touch</div>
+    <h2 class="section-heading reveal">Let's <em>connect</em></h2>
+
+    <div class="contact-grid">
+
+      <!-- LEFT: Intro and social links ──────────────────────── -->
+      <div class="reveal">
+        <!-- CHANGE: Rewrite this intro paragraph -->
+        <p class="contact-intro">
+          Whether you want to collaborate on robotics research, discuss reinforcement learning,
+          or explore opportunities at the intersection of AI and defence systems — I'm always
+          happy to connect with curious people.
+        </p>
+
+        <div class="contact-links">
+
+          <!-- CHANGE: Replace with your real email address (both href and visible text) -->
+          <a href="mailto:kuldeep@example.com" class="contact-link">
+            <div class="contact-link-icon">✉</div>
+            kuldeep@example.com
+          </a>
+
+          <!-- CHANGE: Replace with your Google Scholar profile URL -->
+          <a href="https://scholar.google.com" target="_blank" class="contact-link">
+            <div class="contact-link-icon">G</div>
+            Google Scholar Profile
+          </a>
+
+          <!-- CHANGE: Replace with your GitHub profile URL and username -->
+          <a href="https://github.com/kuldeepgurjar" target="_blank" class="contact-link">
+            <div class="contact-link-icon">⌥</div>
+            github.com/kuldeepgurjar
+          </a>
+
+          <!-- CHANGE: Replace with your LinkedIn profile URL and handle -->
+          <a href="https://linkedin.com/in/kuldeepgurjar" target="_blank" class="contact-link">
+            <div class="contact-link-icon">in</div>
+            linkedin.com/in/kuldeepgurjar
+          </a>
+
+          <!-- TEMPLATE: Add more links below if needed -->
+          <!-- Example: Twitter / X
+          <a href="https://x.com/yourhandle" target="_blank" class="contact-link">
+            <div class="contact-link-icon">𝕏</div>
+            @yourhandle
+          </a>
+          -->
+
+        </div>
+      </div>
+
+      <!-- RIGHT: Contact form ──────────────────────────────── -->
+      <!-- See Formspree instructions above to send real emails -->
+      <div class="reveal reveal-delay-1">
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+
+          <div class="form-field">
+            <label class="form-label" for="fname">Name</label>
+            <input class="form-input" id="fname" type="text" placeholder="Your name" required />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="femail">Email</label>
+            <input class="form-input" id="femail" type="email" placeholder="you@example.com" required />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="fmessage">Message</label>
+            <textarea class="form-textarea" id="fmessage" placeholder="What's on your mind?" required></textarea>
+          </div>
+
+          <button class="form-btn" type="submit">Send message →</button>
+
+          <!-- Success message — shown after submit -->
+          <div class="form-success" id="form-success">
+            ✓ Message received — I'll get back to you soon.
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  FOOTER
+  CHANGE:
+    [ ] Replace "Kuldeep Gurjar" with your name
+    [ ] Update the year if needed
+============================================================ -->
+<footer>
+  <span class="footer-copy">© 2025 Kuldeep Gurjar. Built with HTML · Hosted on GitHub Pages.</span>
+  <a href="#hero" class="footer-back">↑ Back to top</a>
+</footer>
+
+
+<!-- ============================================================
+  JAVASCRIPT
+  ─────────────────────────────────────────────────────────────
+  Three sections:
+
+  1. THREE.JS 3D SCENE — robot visualization
+     CHANGE: Edit robot colors, positions, sizes inside
+             createMobilePlatform(), createHumanoid(),
+             createRoboticArm(), createLLMCore()
+
+  2. PRETEXT-STYLE TEXT EFFECTS
+     Handles the animated hero text typewriter / layout.
+     CHANGE: Edit the taglines array in the typewriter section.
+
+  3. UTILITIES
+     Scroll reveal, form handling. Generally no edits needed.
+============================================================ -->
+<script>
+
+/* ════════════════════════════════════════════════════════════
+   1. THREE.JS ROBOTICS SCENE
+   ════════════════════════════════════════════════════════════
+   Renders 4 robot types in a rotating scene:
+     - Mobile ground platform (wheels + LIDAR)
+     - Humanoid biped (BRS1-inspired)
+     - Robotic arm (UR10-inspired)
+     - LLM/VLM core orb with orbiting rings
+
+   CHANGE: Edit colors in each createXxx() function below.
+   CHANGE: Edit positions in buildScene() at the bottom of this block.
+*/
+
+(function initRobotScene() {
+  const canvas = document.getElementById('robot-canvas');
+  if (!canvas) return;
+
+  /* ── Renderer ─────────────────────────────────────────── */
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const scene = new THREE.Scene();
+
+  /* ── Camera ───────────────────────────────────────────── */
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  camera.position.set(0, 2, 10);
+  camera.lookAt(0, 0.5, 0);
+
+  /* ── Fog — atmospheric depth ──────────────────────────── */
+  scene.fog = new THREE.FogExp2(0x060810, 0.06);
+
+  /* ── Grid floor ───────────────────────────────────────── */
+  const gridHelper = new THREE.GridHelper(20, 20, 0x1a2030, 0x111820);
+  gridHelper.position.y = -1.8;
+  scene.add(gridHelper);
+
+  /* ── Lighting ─────────────────────────────────────────── */
+  // Ambient — base light level
+  const ambient = new THREE.AmbientLight(0x101828, 1.5);
+  scene.add(ambient);
+
+  // CHANGE: Main key light — position and color
+  const keyLight = new THREE.PointLight(0xf0c060, 3, 15); // gold
+  keyLight.position.set(2, 4, 3);
+  keyLight.castShadow = true;
+  scene.add(keyLight);
+
+  // CHANGE: Fill light — position and color
+  const fillLight = new THREE.PointLight(0x40c8c0, 2, 12); // cyan
+  fillLight.position.set(-4, 2, -2);
+  scene.add(fillLight);
+
+  // CHANGE: Back rim light
+  const rimLight = new THREE.PointLight(0x8860f0, 1.5, 10); // purple
+  rimLight.position.set(0, 5, -5);
+  scene.add(rimLight);
+
+  /* ── Shared materials ─────────────────────────────────── */
+  // CHANGE: Edit color values (hex) to change robot body colors
+
+  const matMobile    = new THREE.MeshStandardMaterial({ color: 0x40c8c0, metalness: .7, roughness: .3 });
+  const matHumanoid  = new THREE.MeshStandardMaterial({ color: 0xc8d0e0, metalness: .8, roughness: .2 });
+  const matArm       = new THREE.MeshStandardMaterial({ color: 0xc04858, metalness: .7, roughness: .3 });
+  const matLLM       = new THREE.MeshStandardMaterial({ color: 0x8860f0, metalness: .5, roughness: .4, emissive: 0x4430a0, emissiveIntensity: .4 });
+  const matJoint     = new THREE.MeshStandardMaterial({ color: 0x202530, metalness: .9, roughness: .15 });
+  const matGold      = new THREE.MeshStandardMaterial({ color: 0xf0c060, metalness: .9, roughness: .1 });
+  const matWire      = new THREE.MeshStandardMaterial({ color: 0x304060, metalness: .6, roughness: .5, wireframe: false });
+
+  /* ──────────────────────────────────────────────────────
+     CREATE MOBILE ROBOT (ground platform)
+     CHANGE: Adjust dimensions and material colors above.
+  ────────────────────────────────────────────────────── */
+  function createMobilePlatform() {
+    const group = new THREE.Group();
+
+    // Body
+    const body = new THREE.Mesh(new THREE.BoxGeometry(.9, .35, 1.3), matMobile);
+    body.position.y = .25;
+    body.castShadow = true;
+    group.add(body);
+
+    // Sensor dome (LIDAR)
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(.18, 12, 8, 0, Math.PI*2, 0, Math.PI/2), matGold);
+    dome.position.y = .45;
+    group.add(dome);
+
+    // Wheels — 4 corners
+    const wheelGeo = new THREE.CylinderGeometry(.18, .18, .12, 16);
+    const wheelPositions = [
+      [ .52, .05,  .45], [-.52, .05,  .45],
+      [ .52, .05, -.45], [-.52, .05, -.45],
+    ];
+    wheelPositions.forEach(([x,y,z]) => {
+      const w = new THREE.Mesh(wheelGeo, matJoint);
+      w.rotation.z = Math.PI / 2;
+      w.position.set(x, y, z);
+      w.castShadow = true;
+      group.add(w);
+    });
+
+    // Antenna
+    const ant = new THREE.Mesh(new THREE.CylinderGeometry(.02, .02, .35, 6), matGold);
+    ant.position.set(.3, .6, -.3);
+    group.add(ant);
+
+    return group;
+  }
+
+  /* ──────────────────────────────────────────────────────
+     CREATE HUMANOID ROBOT (BRS1-inspired biped)
+     CHANGE: Adjust proportions and material.
+  ────────────────────────────────────────────────────── */
+  function createHumanoid() {
+    const group = new THREE.Group();
+
+    // Torso
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(.5, .65, .3), matHumanoid);
+    torso.position.y = .8;
+    torso.castShadow = true;
+    group.add(torso);
+
+    // Head
+    const head = new THREE.Mesh(new THREE.BoxGeometry(.32, .32, .28), matHumanoid);
+    head.position.y = 1.3;
+    head.castShadow = true;
+    group.add(head);
+
+    // Visor / eye
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(.26, .08, .04), matLLM);
+    visor.position.set(0, 1.31, .15);
+    group.add(visor);
+
+    // Neck
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(.07, .09, .15, 8), matJoint);
+    neck.position.y = 1.13;
+    group.add(neck);
+
+    // Shoulders
+    [-1, 1].forEach(side => {
+      const shoulder = new THREE.Mesh(new THREE.SphereGeometry(.1, 8, 8), matJoint);
+      shoulder.position.set(side * .35, 1.08, 0);
+      group.add(shoulder);
+
+      // Upper arm
+      const uArm = new THREE.Mesh(new THREE.CylinderGeometry(.07, .06, .38, 8), matHumanoid);
+      uArm.rotation.z = side * .3;
+      uArm.position.set(side * .46, .85, 0);
+      uArm.castShadow = true;
+      group.add(uArm);
+    });
+
+    // Hips
+    const hips = new THREE.Mesh(new THREE.BoxGeometry(.44, .18, .26), matJoint);
+    hips.position.y = .46;
+    group.add(hips);
+
+    // Legs
+    [-1, 1].forEach(side => {
+      // Upper leg
+      const uLeg = new THREE.Mesh(new THREE.CylinderGeometry(.09, .08, .45, 8), matHumanoid);
+      uLeg.position.set(side * .16, .17, 0);
+      uLeg.castShadow = true;
+      group.add(uLeg);
+
+      // Knee joint
+      const knee = new THREE.Mesh(new THREE.SphereGeometry(.09, 8, 8), matJoint);
+      knee.position.set(side * .16, -.1, 0);
+      group.add(knee);
+
+      // Lower leg
+      const lLeg = new THREE.Mesh(new THREE.CylinderGeometry(.07, .06, .4, 8), matHumanoid);
+      lLeg.position.set(side * .16, -.32, 0);
+      lLeg.castShadow = true;
+      group.add(lLeg);
+
+      // Foot
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(.14, .07, .22), matJoint);
+      foot.position.set(side * .16, -.55, .04);
+      group.add(foot);
+    });
+
+    return group;
+  }
+
+  /* ──────────────────────────────────────────────────────
+     CREATE ROBOTIC ARM (UR10-inspired)
+     CHANGE: Adjust link lengths and colors above.
+  ────────────────────────────────────────────────────── */
+  function createRoboticArm() {
+    const group = new THREE.Group();
+
+    // Base mount
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(.22, .28, .18, 16), matArm);
+    base.position.y = 0;
+    base.castShadow = true;
+    group.add(base);
+
+    // Shoulder
+    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(.16, 10, 10), matJoint);
+    shoulder.position.y = .18;
+    group.add(shoulder);
+
+    // Link 1
+    const link1 = new THREE.Mesh(new THREE.CylinderGeometry(.08, .09, .55, 10), matArm);
+    link1.position.set(.15, .48, 0);
+    link1.rotation.z = -.5;
+    link1.castShadow = true;
+    group.add(link1);
+
+    // Elbow
+    const elbow = new THREE.Mesh(new THREE.SphereGeometry(.1, 10, 10), matJoint);
+    elbow.position.set(.38, .72, 0);
+    group.add(elbow);
+
+    // Link 2
+    const link2 = new THREE.Mesh(new THREE.CylinderGeometry(.07, .08, .5, 10), matArm);
+    link2.position.set(.58, 1.0, 0);
+    link2.rotation.z = -.8;
+    link2.castShadow = true;
+    group.add(link2);
+
+    // Wrist
+    const wrist = new THREE.Mesh(new THREE.SphereGeometry(.08, 10, 10), matJoint);
+    wrist.position.set(.74, 1.28, 0);
+    group.add(wrist);
+
+    // Link 3
+    const link3 = new THREE.Mesh(new THREE.CylinderGeometry(.055, .065, .34, 10), matArm);
+    link3.position.set(.82, 1.52, 0);
+    link3.rotation.z = -1.1;
+    link3.castShadow = true;
+    group.add(link3);
+
+    // End effector (gripper stub)
+    const ee = new THREE.Mesh(new THREE.BoxGeometry(.1, .18, .08), matGold);
+    ee.position.set(.88, 1.72, 0);
+    group.add(ee);
+
+    return group;
+  }
+
+  /* ──────────────────────────────────────────────────────
+     CREATE LLM / VLM CORE ORB
+     Glowing sphere with orbital rings, representing AI model.
+     CHANGE: Ring colors and speeds in the animate() loop.
+  ────────────────────────────────────────────────────── */
+  function createLLMCore() {
+    const group = new THREE.Group();
+
+    // Core orb
+    const orb = new THREE.Mesh(new THREE.SphereGeometry(.28, 32, 32), matLLM);
+    group.add(orb);
+
+    // Inner glow shell
+    const glow = new THREE.Mesh(
+      new THREE.SphereGeometry(.34, 32, 32),
+      new THREE.MeshStandardMaterial({
+        color: 0x8860f0, transparent: true, opacity: .12,
+        side: THREE.BackSide, emissive: 0x6040d0, emissiveIntensity: .5
+      })
+    );
+    group.add(glow);
+
+    // Orbital rings — 3 at different tilts
+    const ringGeo = new THREE.TorusGeometry(.6, .018, 8, 64);
+    const ringMat = new THREE.MeshStandardMaterial({ color: 0x8860f0, emissive: 0x6040d0, emissiveIntensity: .6 });
+
+    const ring1 = new THREE.Mesh(ringGeo, ringMat);
+    ring1.rotation.x = .4;
+    group.add(ring1);
+
+    const ring2 = new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color: 0x40c8c0, emissive: 0x20a898, emissiveIntensity: .5 }));
+    ring2.rotation.x = .4;
+    ring2.rotation.z = Math.PI / 2.5;
+    group.add(ring2);
+
+    const ring3 = new THREE.Mesh(ringGeo, new THREE.MeshStandardMaterial({ color: 0xf0c060, emissive: 0xc09040, emissiveIntensity: .4 }));
+    ring3.rotation.y = Math.PI / 3;
+    ring3.rotation.x = -.3;
+    group.add(ring3);
+
+    // Floating data points orbiting the core
+    for (let i = 0; i < 8; i++) {
+      const dot = new THREE.Mesh(
+        new THREE.SphereGeometry(.04, 6, 6),
+        new THREE.MeshStandardMaterial({ color: 0xf0c060, emissive: 0xf0c060, emissiveIntensity: 1 })
+      );
+      const angle = (i / 8) * Math.PI * 2;
+      dot.position.set(Math.cos(angle) * .55, Math.sin(angle * .5) * .2, Math.sin(angle) * .55);
+      group.add(dot);
+    }
+
+    // CHANGE: Store rings for animation
+    group.userData = { ring1, ring2, ring3 };
+    return group;
+  }
+
+  /* ──────────────────────────────────────────────────────
+     BUILD SCENE — place robots
+     CHANGE: Edit positions (x, y, z) and scale values.
+  ────────────────────────────────────────────────────── */
+  function buildScene() {
+    // CHANGE: Mobile robot — position and scale
+    const mobile = createMobilePlatform();
+    mobile.position.set(-3.2, -1.8, 0);
+    mobile.scale.setScalar(1.1);
+    scene.add(mobile);
+
+    // CHANGE: Humanoid — position and scale
+    const humanoid = createHumanoid();
+    humanoid.position.set(-1.0, -1.8, 0);
+    humanoid.scale.setScalar(1.0);
+    scene.add(humanoid);
+
+    // CHANGE: Robotic arm — position and scale
+    const arm = createRoboticArm();
+    arm.position.set(1.2, -1.8, 0);
+    arm.scale.setScalar(1.1);
+    scene.add(arm);
+
+    // CHANGE: LLM orb — position and scale
+    const llm = createLLMCore();
+    llm.position.set(3.4, -.6, 0);
+    llm.scale.setScalar(1.0);
+    scene.add(llm);
+
+    return { mobile, humanoid, arm, llm };
+  }
+
+  const robots = buildScene();
+
+  /* ── Resize handler ───────────────────────────────────── */
+  function onResize() {
+    const wrap = canvas.parentElement;
+    const W = wrap.clientWidth;
+    const H = wrap.clientHeight;
+    renderer.setSize(W, H, false);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', onResize);
+  onResize();
+
+  /* ── Animation loop ───────────────────────────────────── */
+  // CHANGE: Adjust rotation speeds (multiply by different values)
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += .01;
+
+    // Slow scene-wide rotation
+    scene.rotation.y = Math.sin(t * .15) * .15;
+
+    // Mobile robot — gentle bob
+    robots.mobile.position.y = -1.8 + Math.sin(t * .8) * .04;
+    robots.mobile.rotation.y = t * .3;
+
+    // Humanoid — slight sway
+    robots.humanoid.rotation.y = Math.sin(t * .4) * .15;
+    robots.humanoid.position.y = -1.8 + Math.sin(t * .6 + 1) * .03;
+
+    // Arm — elbow oscillation (visual only)
+    robots.arm.rotation.y = Math.sin(t * .35 + .5) * .2;
+
+    // LLM orb rings — independent rotations
+    if (robots.llm.userData) {
+      robots.llm.userData.ring1.rotation.y += .012;
+      robots.llm.userData.ring2.rotation.x += .009;
+      robots.llm.userData.ring3.rotation.z += .007;
+      robots.llm.position.y = -.6 + Math.sin(t * .7) * .1;
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+
+/* ════════════════════════════════════════════════════════════
+   2. PRETEXT-STYLE TEXT EFFECT
+   Animated typewriter for the hero name — simulates
+   Pretext's character-level text layout approach.
+
+   CHANGE: Edit the taglines array with your own phrases.
+   CHANGE: Set typingSpeed / deletingSpeed to taste.
+════════════════════════════════════════════════════════════ */
+(function pretextTypewriter() {
+  // CHANGE: These phrases cycle through in the hero role line
+  const taglines = [
+    'Robotics · Reinforcement Learning · AI for Defence',
+    'Biped Locomotion · Dual-Arm Manipulation',
+    'LLM/VLM Integration · Autonomous Systems',
+    'Signal Temporal Logic · Motion Planning',
+  ];
+
+  const el = document.querySelector('.hero-role');
+  if (!el) return;
+
+  let phraseIdx = 0;
+  let charIdx   = 0;
+  let isDeleting = false;
+
+  const typingSpeed   = 45;   // CHANGE: ms per character when typing
+  const deletingSpeed = 20;   // CHANGE: ms per character when deleting
+  const pauseMs       = 2200; // CHANGE: pause duration on full phrase
+
+  function tick() {
+    const phrase = taglines[phraseIdx % taglines.length];
+
+    if (!isDeleting) {
+      el.textContent = phrase.slice(0, charIdx + 1);
+      charIdx++;
+      if (charIdx === phrase.length) {
+        isDeleting = true;
+        setTimeout(tick, pauseMs);
+        return;
+      }
+      setTimeout(tick, typingSpeed);
+    } else {
+      el.textContent = phrase.slice(0, charIdx - 1);
+      charIdx--;
+      if (charIdx === 0) {
+        isDeleting = false;
+        phraseIdx++;
+        setTimeout(tick, 400);
+        return;
+      }
+      setTimeout(tick, deletingSpeed);
+    }
+  }
+  tick();
+})();
+
+
+/* ════════════════════════════════════════════════════════════
+   3. UTILITIES — generally no changes needed
+════════════════════════════════════════════════════════════ */
+
+/* Scroll reveal */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* Contact form — visual success only (no real email sent by default).
+   See Formspree instructions above to send real emails.
+   CHANGE: Remove this function if using Formspree. */
+function handleSubmit(e) {
+  e.preventDefault();
+  document.getElementById('form-success').style.display = 'block';
+  e.target.reset();
+}
+
+</script>
+
+</body>
+</html>

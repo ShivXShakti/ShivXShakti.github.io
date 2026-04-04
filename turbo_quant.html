@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurboQuant: Network-Integrated Deep Dive</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --color-border-tertiary: #d1d9e0;
+            --color-border-secondary: #8993a4;
+            --color-text-primary: #1a1a1b;
+            --color-text-secondary: #475467;
+            --color-text-tertiary: #71767a;
+            --color-background-secondary: #f6f8fa;
+            --color-background-info: #f0f7ff;
+            --color-background-success: #e6f4f1;
+            --color-background-danger: #fff5f5;
+            --border-radius-md: 6px;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; color: var(--color-text-primary); max-width: 900px; margin: 20px auto; padding: 0 20px; background-color: #fff; }
+        .tq-nav{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--color-border-tertiary);margin-bottom:20px}
+        .tq-btn{padding:8px 16px;border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:13px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;background:white;transition: all 0.2s;}
+        .tq-btn:hover{background: var(--color-background-secondary);}
+        .tq-btn.cur{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-secondary);box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);}
+        .tq-pane{display:none; animation: fadeIn 0.3s;}.tq-pane.cur{display:block}
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .fml{font-family:var(--font-mono);font-size:12px;line-height:1.8;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 16px;margin:10px 0;color:var(--color-text-primary);white-space:pre-wrap}
+        .exa{border-left:4px solid #378ADD;background:var(--color-background-info);padding:12px 16px;margin:12px 0;font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--color-text-primary);white-space:pre-wrap;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0}
+        .ins{border-left:4px solid #1D9E75;background:var(--color-background-success);padding:12px 16px;margin:12px 0;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0}
+        .cau{border-left:4px solid #E24B4A;background:var(--color-background-danger);padding:12px 16px;margin:12px 0;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0}
+        
+        h3{font-size:18px;font-weight:600;color:var(--color-text-primary);margin:20px 0 10px; display: flex; align-items: center; gap: 8px;}
+        p{font-size:14px;line-height:1.6;color:var(--color-text-secondary);margin:10px 0}
+        .lbl{font-size:11px;font-weight:700;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin:20px 0 8px}
+        
+        .viz-container { background: white; border: 1px solid var(--color-border-tertiary); border-radius: 8px; padding: 20px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .var-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: bold; margin-right: 4px; }
+        .v-q { background: #eef6ff; color: #378ADD; border: 1px solid #378ADD; }
+        .v-k { background: #effaf6; color: #1D9E75; border: 1px solid #1D9E75; }
+        .v-v { background: #fff9ed; color: #d97706; border: 1px solid #d97706; }
+        .v-meta { background: #fef2f2; color: #E24B4A; border: 1px solid #E24B4A; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th { background: var(--color-background-secondary); padding: 10px; text-align: left; border-bottom: 2px solid var(--color-border-tertiary); }
+        td { padding: 10px; border-bottom: 1px solid var(--color-border-tertiary); }
+    </style>
+</head>
+<body>
+
+<div class="tq-nav">
+    <button class="tq-btn cur" onclick="tqShow(0)">1 · Network Context</button>
+    <button class="tq-btn" onclick="tqShow(1)">2 · Traditional Quant & G</button>
+    <button class="tq-btn" onclick="tqShow(2)">3 · PolarQuant Math</button>
+    <button class="tq-btn" onclick="tqShow(3)">4 · QJL Error Check</button>
+    <button class="tq-btn" onclick="tqShow(4)">5 · Full Pipeline</button>
+</div>
+
+<div id="tq0" class="tq-pane cur">
+    <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg> Where do these variables come from?</h3>
+    <p>In a Transformer network (like Llama-3), the attention mechanism is the core. TurboQuant operates on the <strong>KV Cache</strong>—the memory of past tokens.</p>
+
+    <div class="lbl">Attention Matrix Equation</div>
+    <div class="fml">\[ \text{Attention}(Q, K, V) = \text{Softmax}\left( \frac{Q \times K^\top}{\sqrt{d}} \right) \times V \]</div>
+
+    <div class="viz-container">
+        <p style="text-align:center; font-weight:600; font-size:14px; margin-bottom:15px;">Data Flow: From Transformer Layer to KV Cache</p>
+                <svg width="100%" viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="90" width="100" height="40" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+            <text x="70" y="110" text-anchor="middle" font-size="12" font-weight="bold">Hidden State</text>
+            <text x="70" y="125" text-anchor="middle" font-size="10" fill="#64748b" font-family="monospace">hₜ</text>
+
+            <path d="M 120 110 L 200 60 M 120 110 L 200 110 M 120 110 L 200 160" stroke="#94a3b8" stroke-width="2" fill="none"/>
+            
+            <rect x="200" y="40" width="80" height="30" rx="4" fill="#eef6ff" stroke="#378ADD"/>
+            <text x="240" y="59" text-anchor="middle" font-size="10" font-weight="bold">W_Q</text>
+            
+            <rect x="200" y="95" width="80" height="30" rx="4" fill="#effaf6" stroke="#1D9E75"/>
+            <text x="240" y="114" text-anchor="middle" font-size="10" font-weight="bold">W_K</text>
+            
+            <rect x="200" y="150" width="80" height="30" rx="4" fill="#fff9ed" stroke="#d97706"/>
+            <text x="240" y="169" text-anchor="middle" font-size="10" font-weight="bold">W_V</text>
+
+            <text x="320" y="59" font-size="14" font-weight="bold" fill="#378ADD">Q</text>
+            <text x="320" y="114" font-size="14" font-weight="bold" fill="#1D9E75">K</text>
+            <text x="320" y="169" font-size="14" font-weight="bold" fill="#d97706">V</text>
+
+            <rect x="380" y="80" width="140" height="120" rx="8" fill="rgba(29, 158, 117, 0.05)" stroke="#1D9E75" stroke-dasharray="5,5"/>
+            <text x="450" y="145" text-anchor="middle" font-size="12" font-weight="bold" fill="#1D9E75">TurboQuant</text>
+            <text x="450" y="160" text-anchor="middle" font-size="10" fill="#1D9E75">Compression</text>
+
+            <rect x="580" y="80" width="180" height="120" rx="8" fill="#fef2f2" stroke="#E24B4A" stroke-width="2"/>
+            <text x="670" y="145" text-anchor="middle" font-size="12" font-weight="bold" fill="#E24B4A">KV CACHE (GPU VRAM)</text>
+            <text x="670" y="165" text-anchor="middle" font-size="10" fill="#E24B4A">L × H × d × bits</text>
+        </svg>
+    </div>
+
+    <div class="lbl">Variable Legend (From Network)</div>
+    <div class="fml"><span class="var-tag v-q">hₜ</span>   <b>Hidden State</b>: The d-dimensional vector coming from the previous layer (\(h_t \in \mathbb{R}^d\)).
+<span class="var-tag v-q">W_Q, W_K, W_V</span> <b>Weight Matrices</b>: Learned parameters (\(\mathbb{R}^{d \times d}\)).
+<span class="var-tag v-q">Q, K, V</span> <b>Projections</b>: Result of \(h_t \times W\). \(K \in \mathbb{R}^{1 \times d}\) and \(V \in \mathbb{R}^{1 \times d}\) are what we compress.
+<span class="var-tag v-k">L</span>    <b>Context Length</b>: Total tokens in memory (e.g., 128k in Llama-3).
+<span class="var-tag v-k">H</span>    <b>Heads</b>: Number of attention heads (Parallel paths).
+<span class="var-tag v-k">d</span>    <b>Head Dimension</b>: Typically <b>128</b>. This is the vector length TurboQuant processes.</div>
+</div>
+
+<div id="tq1" class="tq-pane">
+    <h3>Traditional Quantization & The Role of G</h3>
+    <p>Standard quantization splits the <span class="var-tag v-k">d=128</span> vector into smaller <strong>Groups</strong> of size <span class="var-tag v-k">G</span> to maintain precision. However, every group carries a "Metadata Tax".</p>
+
+    <div class="lbl">Range-Based Scaling Equations</div>
+    <div class="fml">1. Scale: \( s = \frac{x_{max} - x_{min}}{2^b - 1} \)
+2. Quant: \( q(x) = \text{Round}\left( \frac{x - x_{min}}{s} \right) \)
+3. Dequant: \( \hat{x} = q(x) \times s + x_{min} \)</div>
+
+    <div class="viz-container">
+        <p style="text-align:center; font-weight:600; font-size:14px; margin-bottom:15px;">The "Metadata Tax" Problem (d=128, G=8)</p>
+                <svg width="100%" viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg">
+            <text x="400" y="20" text-anchor="middle" font-size="11" fill="#64748b">128-dimensional Key Vector (Original: 2048 bits)</text>
+            
+            <g transform="translate(40, 40)">
+                <rect x="0" y="0" width="40" height="40" rx="2" fill="#eef6ff" stroke="#378ADD"/>
+                <text x="20" y="25" text-anchor="middle" font-size="10" font-weight="bold">G1</text>
+                <rect x="5" y="50" width="30" height="25" rx="2" fill="#fef2f2" stroke="#E24B4A"/>
+                <text x="20" y="66" text-anchor="middle" font-size="8" fill="#E24B4A" font-weight="bold">Meta</text>
+                
+                <rect x="50" y="0" width="40" height="40" rx="2" fill="#eef6ff" stroke="#378ADD"/>
+                <text x="70" y="25" text-anchor="middle" font-size="10" font-weight="bold">G2</text>
+                <rect x="55" y="50" width="30" height="25" rx="2" fill="#fef2f2" stroke="#E24B4A"/>
+                <text x="70" y="66" text-anchor="middle" font-size="8" fill="#E24B4A" font-weight="bold">Meta</text>
+
+                <text x="360" y="25" text-anchor="middle" font-size="20" fill="#94a3b8">. . . . . . . . . . . . . . . . . .</text>
+                <text x="360" y="110" text-anchor="middle" font-size="12" fill="#E24B4A" font-weight="bold">16 Metadata "Backpacks" for d=128 (16 Groups * 32 bits = 512 bits overhead!)</text>
+
+                <rect x="680" y="0" width="40" height="40" rx="2" fill="#eef6ff" stroke="#378ADD"/>
+                <text x="700" y="25" text-anchor="middle" font-size="10" font-weight="bold">G16</text>
+                <rect x="685" y="50" width="30" height="25" rx="2" fill="#fef2f2" stroke="#E24B4A"/>
+                <text x="700" y="66" text-anchor="middle" font-size="8" fill="#E24B4A" font-weight="bold">Meta</text>
+            </g>
+        </svg>
+    </div>
+
+    <div class="lbl">Variables in Traditional Quantization</div>
+    <div class="fml"><span class="var-tag v-q">x</span>       The original BF16 value in the vector.
+<span class="var-tag v-q">b</span>       <b>Bit-width</b>: Target size (e.g., 4 bits).
+<span class="var-tag v-k">G</span>       <b>Group Size</b>: Number of values sharing one Scale/Min.
+<span class="var-tag v-meta">x_min</span>   The minimum value in the group (stored in 16-bit BF16).
+<span class="var-tag v-meta">s</span>       <b>Scale</b>: Step size, \( (x_{max} - x_{min}) / (2^b - 1) \) (stored in 16-bit BF16).
+<span class="var-tag v-q">q(x)</span>    The quantized 4-bit integer.</div>
+
+    <div class="exa"><b>The Math of the Overhead (d=128):</b>
+Traditional (G=8): 
+   Data: 128 values × 4 bits = 512 bits
+   Meta: (128/8) groups × 32 bits (Scale+Min) = <b>512 bits</b>
+   Total: 1024 bits → <b>8 bits/val</b> (2x Compression)
+
+<b>PolarQuant (d=128):</b> 
+   Data: 127 angles × 4 bits = 508 bits
+   Meta: 1 Final Radius (BF16) = <b>16 bits</b>
+   Total: 524 bits → <b>4.125 bits/val</b> (3.88x Compression) ✓</div>
+</div>
+
+<div id="tq2" class="tq-pane">
+    <h3>PolarQuant: Geometric Efficiency & Spherical Math</h3>
+    <p>PolarQuant replaces "Grid Math" (Cartesian) with "Circle Math" (Polar). After rotation, the range of angles is <strong>fixed and known</strong>, eliminating the need for per-group metadata.</p>
+    
+    <div class="viz-container">
+        <p style="text-align:center; font-weight:600; font-size:14px; margin-bottom:15px;">Conceptual Shift: Cartesian vs. Polar</p>
+                <svg width="100%" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(50, 40)">
+                <line x1="0" y1="120" x2="120" y2="120" stroke="#64748b" stroke-width="1"/>
+                <line x1="0" y1="0" x2="0" y2="120" stroke="#64748b" stroke-width="1"/>
+                <circle cx="80" cy="40" r="4" fill="#378ADD"/>
+                <line x1="0" y1="40" x2="80" y2="40" stroke="#378ADD" stroke-dasharray="2,2"/>
+                <line x1="80" y1="40" x2="80" y2="120" stroke="#378ADD" stroke-dasharray="2,2"/>
+                <text x="90" y="35" font-size="10" fill="#378ADD" font-weight="bold">(x, y)</text>
+                <text x="60" y="140" text-anchor="middle" font-size="11" font-weight="bold">Cartesian (Grid)</text>
+            </g>
+            <g transform="translate(380, 40)">
+                <circle cx="60" cy="60" r="60" fill="none" stroke="#d1d9e0" stroke-dasharray="4,4"/>
+                <line x1="60" y1="60" x2="102" y2="18" stroke="#1D9E75" stroke-width="2"/>
+                <circle cx="60" cy="60" r="3" fill="#64748b"/>
+                <circle cx="102" cy="18" r="4" fill="#1D9E75"/>
+                <path d="M 90 60 A 30 30 0 0 0 81 39" fill="none" stroke="#1D9E75" stroke-width="1.5"/>
+                <text x="110" y="15" font-size="10" fill="#1D9E75" font-weight="bold">(r, θ)</text>
+                <text x="60" y="140" text-anchor="middle" font-size="11" font-weight="bold">Polar (Spherical)</text>
+            </g>
+        </svg>
+    </div>
+
+    <div class="lbl">Spherical Coordinate Math Worked Example (2D Pair)</div>
+    <p>Imagine a pair of values from a Key vector projection: \(x = 0.707, y = 0.707\).</p>
+    <div class="exa"><b>Step 1: Calculate the Radius (\(r\))</b>
+Find the magnitude using the Pythagorean theorem:
+\[ r = \sqrt{x^2 + y^2} = \sqrt{0.707^2 + 0.707^2} = \sqrt{0.5 + 0.5} = \mathbf{1.0} \]
+
+<b>Step 2: Calculate the Angle (\(\theta\))</b>
+Find the direction using atan2:
+\[ \theta = \text{atan2}(y, x) = \text{atan2}(0.707, 0.707) = \pi/4 \text{ radians } (45^\circ) \]
+
+<b>Step 3: Quantize the Angle</b>
+Since \(\theta \sim \text{Uniform}[-\pi, \pi)\), we divide the circle into \(2^b\) even slices (e.g., 16 slices for 4-bit). The angle is stored as a slice index. <b>No scale or min is needed!</b></div>
+
+    <div class="lbl">Why This Saves Memory</div>
+    <p>Rotation Scrambles the data so angles become statistically uniform and predictable. By storing only the final radius, we escape the "tax".</p>
+    <table>
+        <tr><th>Variable</th><th>Significance in the Network</th></tr>
+        <tr><td><span class="var-tag v-k">R</span> (Rotation)</td><td>Ensures angles are uniform across the sphere.</td></tr>
+        <tr><td><span class="var-tag v-q">θ</span> (Angle)</td><td>Compressed to bits with <b>zero</b> metadata overhead.</td></tr>
+        <tr><td><span class="var-tag v-meta">r_final</span> (Radius)</td><td>The single "anchor" for the entire 128-dim vector.</td></tr>
+    </table>
+
+    <div class="viz-container">
+        <p style="text-align:center; font-weight:600; font-size:14px; margin-bottom:15px;">The Recursive Reduction Tree</p>
+                <svg width="100%" viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(100, 30)">
+                <rect x="0" y="0" width="30" height="20" fill="#effaf6" stroke="#1D9E75"/><text x="15" y="45" text-anchor="middle" font-size="9">k₁</text>
+                <rect x="40" y="0" width="30" height="20" fill="#effaf6" stroke="#1D9E75"/><text x="55" y="45" text-anchor="middle" font-size="9">k₂</text>
+                <text x="250" y="15" font-size="12" fill="#94a3b8">... 128 Input Dims (BF16) ...</text>
+            </g>
+            <path d="M 125 50 L 150 90 M 165 50 L 150 90" stroke="#94a3b8" fill="none"/>
+            <circle cx="150" cy="105" r="15" fill="#378ADD" stroke="#2563eb"/>
+            <text x="150" y="110" text-anchor="middle" font-size="10" fill="white" font-weight="bold">θ₁</text>
+            <path d="M 150 120 L 300 170" stroke="#94a3b8" stroke-dasharray="3,3" fill="none"/>
+            <rect x="300" y="170" width="100" height="40" rx="4" fill="#fef2f2" stroke="#E24B4A" stroke-width="2"/>
+            <text x="350" y="190" text-anchor="middle" font-size="11" font-weight="bold" fill="#E24B4A">r_final (16-bit)</text>
+        </svg>
+    </div>
+</div>
+
+<div id="tq3" class="tq-pane">
+    <h3>QJL: 1-Bit Error Correction</h3>
+    <p>PolarQuant is great, but rounding introduces error (\(\epsilon\)). QJL uses a tiny 1-bit check to ensure the result is <strong>unbiased</strong>.</p>
+    
+    <div class="lbl">Stochastic Error Estimation</div>
+    <div class="fml">1. Error: \( \epsilon = k' - \tilde{k} \)
+2. Correction Bits: \( c = \text{Sign}( R_{JL} \times \epsilon ) \)
+3. Unbiased Estimate: \( \langle q, k \rangle \approx \langle q, \tilde{k} \rangle + \frac{\pi}{2m} c^\top \times (R_{JL} \times q) \)</div>
+
+    <div class="viz-container">
+        <p style="text-align:center; font-weight:600; font-size:14px; margin-bottom:15px;">The 1-Bit Residual Correction</p>
+                <svg width="100%" viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg">
+            <rect x="50" y="40" width="200" height="30" rx="4" fill="#fef2f2" stroke="#E24B4A" stroke-dasharray="2,2"/>
+            <text x="150" y="60" text-anchor="middle" font-size="11" font-weight="bold" fill="#E24B4A">Error (ε = k' - k̃)</text>
+            <text x="280" y="60" font-size="20" fill="#94a3b8">×</text>
+            <rect x="320" y="20" width="100" height="100" rx="4" fill="#f8fafc" stroke="#64748b"/>
+            <text x="370" y="75" text-anchor="middle" font-size="12" font-weight="bold">R_JL</text>
+            <text x="450" y="60" font-size="20" fill="#94a3b8">→</text>
+            <rect x="500" y="40" width="150" height="30" rx="4" fill="#effaf6" stroke="#1D9E75" stroke-width="2"/>
+            <text x="575" y="60" text-anchor="middle" font-size="11" font-weight="bold" fill="#1D9E75">Sign Bits (c)</text>
+        </svg>
+    </div>
+
+    <div class="lbl">QJL Variables</div>
+    <div class="fml"><span class="var-tag v-meta">ε</span>       <b>Residual</b>: The info lost from PolarQuant (\( k' - \tilde{k} \in \mathbb{R}^d \)).
+<span class="var-tag v-k">R_JL</span>    <b>JL Matrix</b>: A random projection matrix (\( R_{JL} \in \mathbb{R}^{m \times d} \)).
+<span class="var-tag v-k">c</span>       <b>Correction Bits</b>: The sign bits \( c \in \{-1, 1\}^m \).
+<span class="var-tag v-k">m</span>       <b>Bit Budget</b>: Number of correction bits (e.g., 32 bits).</div>
+</div>
+
+<div id="tq4" class="tq-pane">
+    <h3>The Integrated Pipeline</h3>
+    <p>TurboQuant combines geometric efficiency (PolarQuant) with statistical correction (QJL) for massive memory savings.</p>
+
+    <div class="viz-container">
+        <p style="text-align:center; font-weight:600; font-size:14px; margin-bottom:15px;">Summary: d=128 Bit Accounting</p>
+        <table>
+            <tr style="background: var(--color-background-secondary); border-bottom: 2px solid var(--color-border-tertiary);">
+                <th>Component</th><th>Math</th><th>Bits</th>
+            </tr>
+            <tr><td><b>Angular Data</b></td><td>(d-1) × b = 127 × 4</td><td style="color: #378ADD; font-weight: bold;">508</td></tr>
+            <tr><td><b>Global Radius</b></td><td>1 × BF16</td><td style="color: #E24B4A; font-weight: bold;">16</td></tr>
+            <tr><td><b>QJL Correction</b></td><td>m = 32 bits</td><td style="color: #1D9E75; font-weight: bold;">32</td></tr>
+            <tr style="background: var(--color-background-success);">
+                <td><b>Total Compressed</b></td><td>508 + 16 + 32</td><td style="font-weight: 900;">556 bits</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="ins">
+        <b>Conclusion:</b> 
+        Original BF16 vector = <b>2048 bits</b>. 
+        TurboQuant vector = <b>556 bits</b>. 
+        Efficiency = <b>3.68x Compression</b> with near-zero accuracy loss.
+    </div>
+</div>
+
+<script>
+    function tqShow(i){
+        document.querySelectorAll('.tq-pane').forEach(function(p,j){p.classList.toggle('cur',i===j);});
+        document.querySelectorAll('.tq-btn').forEach(function(b,j){b.classList.toggle('cur',i===j);});
+    }
+</script>
+
+</body>
+</html>
